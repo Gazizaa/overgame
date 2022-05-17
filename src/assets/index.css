@@ -14,3 +14,12 @@ body {
   /*-webkit-font-smoothing: antialiased;*/
   /*-moz-osx-font-smoothing: grayscale;*/
 }
+
+
+p {
+  font-family: 'Press Start 2P', cursive;
+}
+
+button {
+  cursor: pointer;
+}

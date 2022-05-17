@@ -1,9 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react'
 import styled from '@emotion/styled'
 import overGame from '../../assets/images/overGame.png'
 import textBc from '../../assets/images/textBc.png'
 import buttons from '../../assets/images/buttons.png'
-
+import GuestUser from './GuestUser'
 
 const MainWrap = styled.div`
   display: flex;
@@ -76,19 +76,18 @@ const MainWrap = styled.div`
       background: #0A014A;
       padding: 20px;
       text-align: center;
-
-      img {
-        width: 100%;
-      }
     }
 
     .__overGame__text__box_4_text {
       background-image: url(${textBc});
-      min-height: 370px;
+      height: 370px;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       border-radius: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
 
       p {
         color: white;
@@ -98,11 +97,21 @@ const MainWrap = styled.div`
       }
 
       .welcome-text_1 {
-        padding: 60px 20px 100px 20px;
+        padding: 25px 20px 90px 20px;
+        line-height: 40px;
+        margin-top: -49px;
+
+        p {
+          //margin: 0 auto;
+          //animation: typing 3.5s steps(30, end), blink-caret .5s step-end infinite;
+          //white-space: nowrap;
+          //overflow: hidden;
+          //border-right: 3px solid white;
+        }
       }
 
       .welcome-text_2 {
-        padding: 0 20px 20px 20px;
+        padding: 0 20px 0 20px;
         line-height: 40px;
       }
     }
@@ -141,7 +150,6 @@ const MainWrap = styled.div`
           clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
           
           .gameOnBtn {
-            background-color: #F2B84B;
             padding: 10px 10px 12px 10px;
             cursor: pointer;
             clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
@@ -149,17 +157,14 @@ const MainWrap = styled.div`
             button {
               background: none;
               border: none;
-              cursor: pointer;
               margin-bottom: 9px;
               padding-bottom: 7px;
               border-bottom: 2px solid #D4A142;
               width: 83px;
 
               p {
-                color: white;
                 font-size: 15px;
                 text-transform: uppercase;
-                font-family: 'Press Start 2P', cursive;
                 line-height: 24px;
               }
             }
@@ -191,9 +196,24 @@ const MainWrap = styled.div`
       height: 60px
     }
   }
+
+  //@keyframes typing {
+  //  from { width: 0 }
+  //  to { width: 100% }
+  //}
+  //
+  //@keyframes blink-caret {
+  //  from, to { border-color: transparent }
+  //  50% { border-color: white }
+  //}
+  
 `
 
 const WelcomePage = () => {
+
+    const [turnOnBtn, setTurnOnBtn] = useState(false)
+
+
   return (
       <MainWrap>
           <div className="__machine__header">
@@ -218,10 +238,17 @@ const WelcomePage = () => {
               <div className="__overGame__text__box_2">
                   <div className="__overGame__text__box_3">
                       <div className="__overGame__text__box_4_text">
-                          <p className='welcome-text_1'>Welcome, dear gamer!</p>
-                          <p className='welcome-text_2'>
-                              You are on the best website with the best flash games that you've never played before!!!
-                          </p>
+                          {!turnOnBtn && (
+                              <>
+                                  <div className="welcome-text_1">
+                                      <p>Welcome, dear gamer!</p>
+                                  </div>
+                                  <div className="welcome-text_2">
+                                      <p>You are on the best website with the best flash games that you've never played before!!!</p>
+                                  </div>
+                              </>
+                          )}
+                          {turnOnBtn && <GuestUser/> }
                       </div>
                   </div>
               </div>
@@ -232,10 +259,19 @@ const WelcomePage = () => {
                   <div className="footer_buttons_box_3">
                       <div className="gameOnBtn__box_1">
                           <div className="gameOnBtn__box_2">
-                              <div className="gameOnBtn">
-                                  <button>
-                                      <p>
-                                          TURN <br/> ON
+                              <div
+                                  className="gameOnBtn"
+                                  style={{background: turnOnBtn ? '#F25E6B' : '#F2B84B'}}
+                              >
+                                  <button
+                                      onClick={() => setTurnOnBtn(!turnOnBtn)}
+                                  >
+                                      <p
+                                          style={{color: turnOnBtn ? '#F2B84B' : '#FFFFFF'}}
+                                      >
+                                          TURN
+                                          <br/>
+                                          {turnOnBtn ? 'OFF' : 'ON'}
                                       </p>
                                   </button>
                               </div>
