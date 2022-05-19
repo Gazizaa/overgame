@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import Header from './Header'
 
 
 export interface MainPageProps {
@@ -7,7 +8,7 @@ export interface MainPageProps {
 const MainPage: FC<MainPageProps> = () => {
   return (
     <>
-        <p style={{color: 'white', fontWeight: 600, padding: '20px'}}>MainPage</p>
+        <Header/>
     </>
   )
 }
