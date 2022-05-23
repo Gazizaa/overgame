@@ -11,7 +11,7 @@ interface IInstanceProps {
 
 export default ({ dispatch, getState }: IInstanceProps | any): AxiosInstance => {
   const instance: AxiosInstance = axios.create({
-    baseURL: process.env.BASE_URL,
+    baseURL: 'https://overgame.kz/api',
   })
 
   const axiosInterceptors = new AxiosInterceptors(instance)

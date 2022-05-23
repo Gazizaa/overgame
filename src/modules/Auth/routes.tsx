@@ -2,7 +2,8 @@ import React from 'react'
 import {getDashedStr} from '../../lib/utils/getDashedStr'
 import {
   Auth,
-  SignIn
+  SignIn,
+  SignUp
 } from './pages'
 import {IRoute} from './types'
 
@@ -29,6 +30,6 @@ export const getRoutes = (key: string): IRoute[] => [
     path: '/auth/sign-up',
     key: getDashedStr(key, KEYS.SIGN_UP),
     exact: true,
-    component: () => <div style={{color: 'white'}}>Coming Soon!</div>,
+    component: SignUp,
   },
 ]

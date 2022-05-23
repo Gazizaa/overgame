@@ -54,7 +54,7 @@ class AxiosInterceptors {
     onLogoutCb: VoidFunction,
   ) {
     const ctx = this
-    const refreshUrl = '/user-service/v1/admi/refresh'
+    const refreshUrl = '/v1/users/refresh'
 
     return function(error) {
       // tslint:disable-next-line:no-console

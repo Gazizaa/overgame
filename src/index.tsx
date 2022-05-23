@@ -24,15 +24,15 @@ const Index: FC = () => {
         <React.StrictMode>
             <StoreProvider store={store}>
                 {/*<ErrorBoundary>*/}
-                {/*    <PersistGate persistor={persistor}>*/}
-                        {/*<PreloadProvider>*/}
-                        {/*    <CookiesProvider>*/}
+                    <PersistGate persistor={persistor}>
+                        <PreloadProvider>
+                            <CookiesProvider>
                                 <Router history={history}>
                                     <RenderRoutes routes={routes}/>
                                 </Router>
-                            {/*</CookiesProvider>*/}
-                        {/*</PreloadProvider>*/}
-                    {/*</PersistGate>*/}
+                            </CookiesProvider>
+                        </PreloadProvider>
+                    </PersistGate>
                 {/*</ErrorBoundary>*/}
             </StoreProvider>
         </React.StrictMode>

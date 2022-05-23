@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, {FC, useRef, useState} from 'react'
 import {Link} from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
 import {useHistory} from 'react-router-dom'
@@ -10,7 +10,7 @@ import * as Yup from 'yup'
 import { moduleName as welcomeModule } from '../../../WelcomePage/moduleName'
 
 import { turnOnOffBtn } from '../../../WelcomePage/slices/welcome'
-import {signIn} from '../../slices/auth'
+import {signUp} from '../../slices/auth'
 
 import overGame from '../../../../assets/images/overGame.png'
 import textBc from '../../../../assets/images/textBc.png'
@@ -20,7 +20,7 @@ import loginBtnImg from '../../../../assets/images/loginBtn.png'
 
 
 
-const SignInWrap = styled.div`
+const SignUpWrap = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -114,54 +114,22 @@ const SignInWrap = styled.div`
         font-size: 24px;
         font-weight: 400;
         text-transform: uppercase;
+        margin-bottom: 20px;
       }
       
       .auth-form {
-        display: flex;
-        justify-content: space-evenly;
-        margin-top: 40px;
-        color: white;
-
-        .auth-form_text  p {
-          font-weight: 400;
-          font-size: 20px;
-        }
-        
-        .email-p {
-          padding-top: 10px;
-        }
-        
-        .password-p {
-          margin-top: 37px;
-        }
-        form {
-          display: flex;
-          flex-direction: column;
-          
-          #password {
-            margin-top: 20px;
-          }
-
-          input[type=text], input[type=password] {
+          input[type=text], input[type=password], input[type=date], input[type=email] {
             color: white;
             font-size: 18px;
             font-family: 'Press Start 2P', cursive;
           }
 
-          input:-webkit-autofill,
-          input:-webkit-autofill:hover,
-          input:-webkit-autofill:focus,
-          textarea:-webkit-autofill,
-          textarea:-webkit-autofill:hover,
-          textarea:-webkit-autofill:focus,
-          select:-webkit-autofill,
-          select:-webkit-autofill:hover,
-          select:-webkit-autofill:focus {
-            border: none; !important;
-            background: none;!important;
-            -webkit-text-fill-color: #F25E6B;
-          }
-          
+        input[type="date"]::-webkit-inner-spin-button,
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          display: none;
+          -webkit-appearance: none;
+        }
+        
           input {
             border: none;
             background: none;
@@ -177,39 +145,95 @@ const SignInWrap = styled.div`
               font-size: 20px;
               padding-top: 10px;
             }
-            
-            
-            //:focus {
-            //  color: white;
-            //  font-size: 20px;
-            //  font-family: 'Press Start 2P', cursive;
-            //}
           }
+        
+        .form {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          
+          .form_username {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 85%;
+            
+            .importFileBox {
+              width: 62%;
+              text-align: left;
+              
+              span {
+                font-size: 10px;
+                margin-left: 10px;
+              }
+            }
+            
+            .importFile {
+              border: none;
+              background: none;
+              background: #D0BCFF;
+              border-radius: 20px;
+              padding: 10px;
+              
+              p {
+                color: #381E72;
+              }
+            }
+        }
           
           .submitBtn {
-            background: url(${loginBtnImg}) no-repeat;
-            height: 100px;
-            width: auto;
-            background-size: 160px;
-            background-position-y: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-evenly;
+            width: 90%;
+            margin-top: 20px;
+             p {
+               font-size: 18px;
+             }
             
-            button {
-              background: none;
+            .login button{
+              background: url(${loginBtnImg}) no-repeat;
+              height: 86px;
+              width: 156px;
               border: none;
-              color: white;
+              -webkit-background-size: 160px;
+              background-size: 155px;
+              background-position-y: center;
+              
               p {
                 position: relative;
-                top: 35px;
-                right: 123px;
-                font-size: 20px;
+                bottom: 4px;
+                text-transform: capitalize;
+                
+              }
+              a {
+                text-decoration: none;
+              }
+            }
+
+
+            .register button {
+              background: url(${loginBtnImg}) no-repeat;
+              height: 86px;
+              width: 161px;
+              border: none;
+              -webkit-background-size: 160px;
+              background-size: 160px;
+              background-position-y: center;
+
+              p {
+                position: relative;
+                bottom: 2px;
+                font-size: 16px;
               }
             }
           }
-          
-          .errorMessage {
-            font-size: 10px;
-            text-align: left;
-          }
+
+           .errorMessage {
+             font-size: 10px;
+             text-align: left;
+             margin-bottom: 5px;
+           }
         }
       }
 
@@ -308,7 +332,7 @@ const SignInWrap = styled.div`
   }
 `
 
-const SignIn: FC = () => {
+const SignUp: FC = () => {
     const dispatch = useAppDispatch()
     const history = useHistory()
 
@@ -316,13 +340,29 @@ const SignIn: FC = () => {
         state => state[welcomeModule].welcome.turnOn,
     )
 
+    const ref = useRef(null)
+    const [file, setFile] = useState<any>(null)
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFile(e.target.files[0])
+        }
+    }
+
+    const importFile = () => {
+        if (ref.current) {
+            ref.current.click()
+        }
+    }
+
     const DisplayingErrorMessagesSchema = Yup.object().shape({
-        username: Yup.string().email('Invalid email!').required('Required!'),
-        password: Yup.string().required('Required!'),
+        email: Yup.string().email('Invalid email!').required('Required!'),
+        username: Yup.string().required('Required!'),
+        dateOfBirth: Yup.string().required('Required!'),
     });
 
-  return (
-    <SignInWrap>
+    return (
+    <SignUpWrap>
         <div className="__machine__header">
             <div className="__machine__header__box_1">
                 <div className="__machine__header__box_2">
@@ -346,59 +386,111 @@ const SignIn: FC = () => {
                 <div className="__overGame__text__box_3">
                     <div className="__overGame__text__box_4_text">
                         <div className="login">
-                            <p>Login</p>
+                            <p>REGISTRATION</p>
                         </div>
                         <div className="auth-form">
-                            <div className='auth-form_text'>
-                                <p className='email-p'>E-mail</p>
-                                <p className='password-p'>Password</p>
-                            </div>
                             <div>
                                 <Formik
                                     initialValues={{
                                         username: '',
-                                        password: '',
+                                        email: '',
+                                        dateOfBirth: '',
                                     }}
                                     validationSchema={DisplayingErrorMessagesSchema}
                                     onSubmit={values => {
-                                        dispatch(signIn(values))
+                                        dispatch(signUp({
+                                            body: values,
+                                            file: file
+                                        }))
                                     }}
                                 >
                                     {({errors, touched}) => (
                                         <Form className='form' autoComplete='off'>
-                                            <Field type='text' id='username' name="username" placeholder='Enter e-mail'/>
-                                            {touched.username && errors.username &&
-                                                <div className='errorMessage'>
-                                                    {errors.username}
+                                            <div className='form_username'>
+                                                <div>
+                                                    <label htmlFor="username">Username</label>
                                                 </div>
-                                            }
-
-                                            <Field type='password' id='password' name="password" placeholder='Enter password'/>
-                                            {touched.password && errors.password &&
-                                                <div className='errorMessage'>
-                                                    {errors.password}
-                                                </div>
-                                            }
-                                            <div className='submitBtn'>
-                                                <button type="submit">
-                                                    <p>Login</p>
-                                                </button>
+                                              <div>
+                                                  <Field autoComplete="nope" type="text" id="username" name="username"
+                                                         placeholder="Enter your username"/>
+                                                  {touched.username && errors.username &&
+                                                      <div className="errorMessage">
+                                                          {errors.username}
+                                                      </div>
+                                                  }
+                                              </div>
                                             </div>
 
+                                            <div className='form_username'>
+                                                <div>
+                                                    <label htmlFor="email">E-mail</label>
+                                                </div>
+                                               <div>
+                                                   <Field type="email" id="email" name="email"
+                                                          placeholder="Enter email"/>
+                                                   {touched.email && errors.email &&
+                                                       <div className="errorMessage">
+                                                           {errors.email}
+                                                       </div>
+                                                   }
+                                               </div>
+                                            </div>
+                                            <div className='form_username'>
+                                                <div>
+                                                    <label htmlFor="dateOfBirth">Date of birth</label>
+                                                </div>
+                                                <div>
+                                                    <Field type="date" id="dateOfBirth" name="dateOfBirth"
+                                                           placeholder="dd/mm/yyyy"/>
+                                                    {touched.dateOfBirth && errors.dateOfBirth &&
+                                                        <div className="errorMessage">
+                                                            {errors.dateOfBirth}
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div className='form_username'>
+                                                <div>
+                                                    <label htmlFor="file">Profile Image</label>
+                                                </div>
+                                                <div className='importFileBox'>
+                                                    <button type="button" onClick={importFile} className='importFile'>
+                                                        <p>Choose File</p>
+                                                    </button>
+                                                    <input
+                                                        ref={ref}
+                                                        type="file"
+                                                        id="file"
+                                                        name="file"
+                                                        accept=".jpg,.jpeg,"
+                                                        onChange={onChange}
+                                                        style={{ display: 'none' }}
+                                                    />
+                                                    <span>{file ? file.name : ''}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className='submitBtn'>
+                                                <div className="login">
+                                                    <Link to="/auth/sign-in">
+                                                        <button type="button">
+                                                            <p>Login</p>
+                                                        </button>
+                                                    </Link>
+                                                </div>
+                                                <div className="register">
+                                                    <button type="submit">
+                                                        <p>Register</p>
+                                                    </button>
+                                                </div>
+
+                                            </div>
                                         </Form>
                                     )}
                                 </Formik>
                             </div>
                         </div>
-                        <div className='register'>
-                            <p>
-                                If you don’t have an account, please,
-                                <Link to="/auth/sign-up">
-                                    <span>click here</span>
-                                </Link>
-                            </p>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -443,8 +535,8 @@ const SignIn: FC = () => {
                 </div>
             </div>
         </div>
-    </SignInWrap>
+    </SignUpWrap>
   )
 }
 
-export default SignIn
+export default SignUp

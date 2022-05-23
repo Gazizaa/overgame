@@ -16,7 +16,11 @@ const RenderMainRoutes = ({ routes }) => {
       key: 'stub',
       exact: true,
       skip: true,
-      component: () => <Redirect to={routes[0].path} />,
+      component: () => (
+          <Redirect
+              to={routes.find(route => route.path === '/main').path}
+          />
+      ),
       routes: [],
     })
   }

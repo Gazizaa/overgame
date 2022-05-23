@@ -13,7 +13,7 @@ const FooterWrap = styled.div`
   display: flex;
   justify-content: space-around;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 220px;
   padding-top: 80px;
   
   p, span {

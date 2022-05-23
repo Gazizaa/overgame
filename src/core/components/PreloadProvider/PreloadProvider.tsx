@@ -1,9 +1,9 @@
 import { Component, ReactNode } from 'react'
 import { connect } from 'react-redux'
-
-import { moduleName as authModule } from '../../../modules/Auth/moduleName'
-
 import {AppDispatch, RootState} from '../../../store'
+import history from '../../../settings/history'
+import { moduleName as authModule } from '../../../modules/Auth/moduleName'
+import {fetchProfile} from '../../../modules/common/slices/profile'
 
 
 interface PreloadProps {
@@ -54,9 +54,9 @@ const mapStateToProps = (state: RootState) => ({
 })
 
 const mapDispatchToProps = (dispatch: AppDispatch) => ({
-  // onAuth: () => history.replace('/auth'),
-  // onMain: () => history.replace('/'),
-  // onFetchProfile: () => dispatch(fetchProfile()),
+  onAuth: () => history.replace('/welcome'),
+  onMain: () => history.replace('/'),
+  onFetchProfile: () => dispatch(fetchProfile()),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(PreloadProvider)

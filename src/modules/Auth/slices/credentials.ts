@@ -37,7 +37,7 @@ export const { auth, logout } = credentialsSlice.actions
 export default persistReducer(
   {
     storage,
-    key: 'doco_credentials',
+    key: 'overgame_credentials',
     version: 1,
   },
   credentialsSlice.reducer,

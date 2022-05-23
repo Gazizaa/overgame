@@ -1,5 +1,15 @@
 import React, { FC } from 'react'
+import {useAppDispatch, useAppSelector} from '../../../store/hooks'
 import styled from '@emotion/styled'
+
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation } from "swiper"
+import "swiper/css"
+import "swiper/css/pagination"
+import "swiper/css/navigation"
+import { moduleName as commonModule } from '../../common/moduleName'
+
+import {logout} from '../../Auth/slices/credentials'
 
 import backgroundImage from '../../../assets/images/HeaderBackground.png'
 import profileImg from '../../../assets/images/profileImg.png'
@@ -11,11 +21,15 @@ import addGame from '../../../assets/images/addGame.png'
 import help from '../../../assets/images/help.png'
 import search from '../../../assets/images/searchIcon.png'
 import inputIcon from '../../../assets/images/inputIcon.png'
+import swiper1 from '../../../assets/images/swiper1.png'
+import swiper2 from '../../../assets/images/swiper2.png'
+import swiper3 from '../../../assets/images/swiper3.png'
+
 
 const HeaderWrap = styled.div`
   .header {
     background-image: url(${backgroundImage});
-    height: 700px;
+    height: 650px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -32,6 +46,7 @@ const HeaderWrap = styled.div`
       width: 20%;
       border-radius: 20px;
       display: flex;
+      align-items: center;
       padding-top: 10px;
 
       .imgBox {
@@ -47,20 +62,29 @@ const HeaderWrap = styled.div`
         border-top-right-radius: 20px;
         width: 170px;
         height: 75px;
-        margin-top: 5px;
         
         .name {
-          background-image: url(${profile2Img});
-          width: 60px;
-          height: 26px;
-          background-size: cover;
-          background-repeat: no-repeat;
+          // background: url(${profile2Img}) no-repeat;
+          // width: 60px;
+          // height: 26px;
+          // background-size: 160px;
+          // background-position-y: center;
+
+          .profileName {
+            background: #00C6C3;
+            width: auto;
+            padding: 4px;
+            margin-bottom: 3px;
+            border-radius: 18px;
+            font-size: 14px;
+          }
         }
 
         p {
           color: white;
           font-size: 10px;
           line-height: 16px;
+          cursor: pointer;
         }
       }
     }
@@ -155,6 +179,14 @@ const HeaderWrap = styled.div`
         }
       } 
     }
+  
+  .mySwiper {
+    width: 94%;
+    margin-top: 220px;
+    img {
+      width: 500px;
+      height: 300px;
+    }
   }
 `
 
@@ -163,20 +195,33 @@ export interface MainPageProps {
 }
 
 const Header: FC<MainPageProps> = () => {
-  return (
+    const dispatch = useAppDispatch()
+    const { profile } = useAppSelector(state => state[commonModule].profile)
+
+    const handleClick = () => {
+        dispatch(logout())
+    }
+
+    return (
     <HeaderWrap>
         <div className='header'>
             <div className='nav'>
                 <div className='profile'>
                     <div className='imgBox'>
-                        <img src={profileImg} alt='profileImg'/>
+                        <img src={profile?.id !== null ? profile?.imgUrl : profileImg} alt='profileImg'/>
                     </div>
                     <div className='profileBox'>
                         <div className='name'>
+                            <p className='profileName'>
+                                {profile?.id !== null
+                                ? profile?.username
+                                : 'GUEST'
+                            }
+                            </p>
                         </div>
                         <p>PROFILE</p>
                         <p>CHANGE USER</p>
-                        <p>LOGOUT</p>
+                        <p onClick={handleClick}>LOGOUT</p>
                     </div>
                 </div>
                 <div className='navbar'>
@@ -205,6 +250,30 @@ const Header: FC<MainPageProps> = () => {
                         <p>HELP</p>
                     </div>
                 </div>
+            </div>
+
+            <div className='swiper'>
+                <Swiper
+                    slidesPerView={3}
+                    spaceBetween={10}
+                    navigation={true}
+                    className="mySwiper"
+                    pagination={{
+                        type: "fraction"
+                    }}
+                    modules={[Navigation]}
+                    loop={true}
+                >
+                    <SwiperSlide>
+                        <img alt={'swiper1'} src={swiper2} />
+                    </SwiperSlide>
+                    <SwiperSlide>
+                        <img alt={'swiper2'} src={swiper1} />
+                    </SwiperSlide>
+                    <SwiperSlide>
+                        <img alt={'swiper3'} src={swiper3} />
+                    </SwiperSlide>
+                </Swiper>
             </div>
         </div>
 

@@ -5,6 +5,16 @@ export type SignInParams = {
   password: string
 }
 
+export type SignUpParams = {
+  body: {
+    username: string,
+    email: string,
+    dateOfBirth: string,
+    roleCode?: string
+  }
+  file?: File
+}
+
 
 export type INavigationRoute = {
   icon: FC

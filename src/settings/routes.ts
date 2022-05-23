@@ -16,17 +16,17 @@ enum KEYS {
 
 const mainRoutes: IRoute[] = [
   {
-    path: '/welcome',
-    key: KEYS.WELCOME,
-    exact: false,
-    routes: getWelcomeRoutes(KEYS.WELCOME),
-    component: RenderRoutes,
-  },
-  {
     path: '/main',
     key: KEYS.MAIN,
     exact: false,
     routes: getMainRoutes(KEYS.MAIN),
+    component: RenderRoutes,
+  },
+  {
+    path: '/welcome',
+    key: KEYS.WELCOME,
+    exact: false,
+    routes: getWelcomeRoutes(KEYS.WELCOME),
     component: RenderRoutes,
   },
 ]

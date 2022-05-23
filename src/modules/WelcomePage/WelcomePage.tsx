@@ -1,9 +1,19 @@
 import React, {useState} from 'react'
+import {useAppDispatch, useAppSelector} from '../../store/hooks'
+
 import styled from '@emotion/styled'
+
+import GuestUser from './GuestUser'
+
+import { moduleName as welcomeModule } from './moduleName'
+
 import overGame from '../../assets/images/overGame.png'
 import textBc from '../../assets/images/textBc.png'
 import buttons from '../../assets/images/buttons.png'
-import GuestUser from './GuestUser'
+import {turnOnOffBtn} from './slices/welcome'
+
+
+
 
 const MainWrap = styled.div`
   display: flex;
@@ -210,9 +220,11 @@ const MainWrap = styled.div`
 `
 
 const WelcomePage = () => {
+    const dispatch = useAppDispatch()
 
-    const [turnOnBtn, setTurnOnBtn] = useState(false)
-
+    const buttonStatus = useAppSelector(
+        state => state[welcomeModule].welcome.turnOn,
+    )
 
   return (
       <MainWrap>
@@ -238,7 +250,7 @@ const WelcomePage = () => {
               <div className="__overGame__text__box_2">
                   <div className="__overGame__text__box_3">
                       <div className="__overGame__text__box_4_text">
-                          {!turnOnBtn && (
+                          {!buttonStatus && (
                               <>
                                   <div className="welcome-text_1">
                                       <p>Welcome, dear gamer!</p>
@@ -248,7 +260,7 @@ const WelcomePage = () => {
                                   </div>
                               </>
                           )}
-                          {turnOnBtn && <GuestUser/> }
+                          {buttonStatus && <GuestUser/> }
                       </div>
                   </div>
               </div>
@@ -261,17 +273,17 @@ const WelcomePage = () => {
                           <div className="gameOnBtn__box_2">
                               <div
                                   className="gameOnBtn"
-                                  style={{background: turnOnBtn ? '#F25E6B' : '#F2B84B'}}
+                                  style={{background: buttonStatus ? '#F25E6B' : '#F2B84B'}}
                               >
                                   <button
-                                      onClick={() => setTurnOnBtn(!turnOnBtn)}
+                                      onClick={() => dispatch(turnOnOffBtn(!buttonStatus)) }
                                   >
                                       <p
-                                          style={{color: turnOnBtn ? '#F2B84B' : '#FFFFFF'}}
+                                          style={{color: buttonStatus ? '#F2B84B' : '#FFFFFF'}}
                                       >
                                           TURN
                                           <br/>
-                                          {turnOnBtn ? 'OFF' : 'ON'}
+                                          {buttonStatus ? 'OFF' : 'ON'}
                                       </p>
                                   </button>
                               </div>
