@@ -11,8 +11,6 @@ import {AuthState, CredentialsState} from '../types/interfaces'
 
 
 
-
-
 /**
  * Actions
  */
@@ -34,7 +32,7 @@ export const signUp: AppThunk<void, SignUpParams> = createAsyncThunk(
         const formData = new FormData()
         formData.append(
             'user',
-            new Blob([JSON.stringify(params.body)], { type: 'application/json' }),
+            new Blob([JSON.stringify(params.body)], {type: 'application/json'}),
         )
 
         if (params.file) {
@@ -48,11 +46,11 @@ export const signUp: AppThunk<void, SignUpParams> = createAsyncThunk(
                 },
             })
             .then((res: AxiosResponse<CredentialsState>) => {
-                thunkApi.dispatch(auth(res.data))
-                history.push('/main')
+                if (res.status === 200) {
+                    history.push('/auth/sign-in')
+                }
             })
             .catch(thunkErrorHandler(thunkApi))
-
     })
 
 /**

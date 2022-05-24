@@ -2,6 +2,7 @@ import React, {FC, useRef, useState} from 'react'
 import {Link} from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks'
 import {useHistory} from 'react-router-dom'
+import moment from 'moment'
 
 import styled from '@emotion/styled'
 import { Formik, Form, Field } from 'formik'
@@ -399,7 +400,11 @@ const SignUp: FC = () => {
                                     validationSchema={DisplayingErrorMessagesSchema}
                                     onSubmit={values => {
                                         dispatch(signUp({
-                                            body: values,
+                                            body: {
+                                                ...values,
+                                                dateOfBirth: moment(values.dateOfBirth).format('DD.MM.YYYY'),
+                                                roleCode: 'OVERGAME_USER_ROLE',
+                                            },
                                             file: file
                                         }))
                                     }}
@@ -441,7 +446,9 @@ const SignUp: FC = () => {
                                                 </div>
                                                 <div>
                                                     <Field type="date" id="dateOfBirth" name="dateOfBirth"
-                                                           placeholder="dd/mm/yyyy"/>
+                                                           placeholder="dd/mm/yyyy"
+                                                           max="26-05-2222"
+                                                    />
                                                     {touched.dateOfBirth && errors.dateOfBirth &&
                                                         <div className="errorMessage">
                                                             {errors.dateOfBirth}
