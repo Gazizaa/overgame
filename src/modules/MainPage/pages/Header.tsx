@@ -1,19 +1,13 @@
 import React, { FC } from 'react'
+import {Link, useHistory} from 'react-router-dom'
 import {useAppDispatch, useAppSelector} from '../../../store/hooks'
 import styled from '@emotion/styled'
 
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation } from "swiper"
-import "swiper/css"
-import "swiper/css/pagination"
-import "swiper/css/navigation"
 import { moduleName as commonModule } from '../../common/moduleName'
 
 import {logout} from '../../Auth/slices/credentials'
 
-import backgroundImage from '../../../assets/images/HeaderBackground.png'
 import profileImg from '../../../assets/images/profileImg.png'
-import profile2Img from '../../../assets/images/profileImg2.png'
 import OG from '../../../assets/images/OG.png'
 import home from '../../../assets/images/Home.png'
 import ourGames from '../../../assets/images/ourGames.png'
@@ -21,23 +15,9 @@ import addGame from '../../../assets/images/addGame.png'
 import help from '../../../assets/images/help.png'
 import search from '../../../assets/images/searchIcon.png'
 import inputIcon from '../../../assets/images/inputIcon.png'
-import swiper1 from '../../../assets/images/swiper1.png'
-import swiper2 from '../../../assets/images/swiper2.png'
-import swiper3 from '../../../assets/images/swiper3.png'
 
 
 const HeaderWrap = styled.div`
-  .header {
-    background-image: url(${backgroundImage});
-    height: 650px;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-  }
-  
   .nav {
     display: flex;
     justify-content: space-around;
@@ -64,11 +44,6 @@ const HeaderWrap = styled.div`
         height: 75px;
         
         .name {
-          // background: url(${profile2Img}) no-repeat;
-          // width: 60px;
-          // height: 26px;
-          // background-size: 160px;
-          // background-position-y: center;
 
           .profileName {
             background: #00C6C3;
@@ -108,6 +83,7 @@ const HeaderWrap = styled.div`
       }
       
       .OG {
+        cursor: pointer;
         img {
           width: 70px;
         }
@@ -115,6 +91,7 @@ const HeaderWrap = styled.div`
       
       .home {
         margin-left: 25px;
+        cursor: pointer;
         img {
           width: 40px;
           padding-bottom: 10px;
@@ -135,6 +112,7 @@ const HeaderWrap = styled.div`
       }
 
       .addGame {
+        cursor: pointer;
         img {
           width: 50px;
         }
@@ -179,15 +157,6 @@ const HeaderWrap = styled.div`
         }
       } 
     }
-  
-  .mySwiper {
-    width: 94%;
-    margin-top: 220px;
-    img {
-      width: 500px;
-      height: 300px;
-    }
-  }
 `
 
 
@@ -196,6 +165,7 @@ export interface MainPageProps {
 
 const Header: FC<MainPageProps> = () => {
     const dispatch = useAppDispatch()
+    const history = useHistory()
     const { profile } = useAppSelector(state => state[commonModule].profile)
 
     const handleClick = () => {
@@ -204,7 +174,7 @@ const Header: FC<MainPageProps> = () => {
 
     return (
     <HeaderWrap>
-        <div className='header'>
+        <div>
             <div className='nav'>
                 <div className='profile'>
                     <div className='imgBox'>
@@ -225,23 +195,30 @@ const Header: FC<MainPageProps> = () => {
                     </div>
                 </div>
                 <div className='navbar'>
-                    <div className='OG'>
-                        <img alt='OG' src={OG}/>
-                    </div>
-                    <div className='home'>
-                        <img alt='home' src={home}/>
-                        <p>HOME</p>
-                    </div>
+                    <Link to='/main'>
+                        <div className='OG'>
+                            <img alt='OG' src={OG}/>
+                        </div>
+                    </Link>
+
+                    <Link to='/main'>
+                        <div className='home'>
+                            <img alt='home' src={home}/>
+                            <p>HOME</p>
+                        </div>
+                    </Link>
+
+
                     <div className='ourGames'>
                         <img alt='ourGames' src={ourGames}/>
                         <p>OUR <br/> GAMES</p>
                     </div>
                     <div className='navInput'>
                         <img className='search' alt='search' src={search}/>
-                        <input placeholder='SEARCH'/>
+                        <input placeholder='SEARCH' readOnly/>
                         <img className='inputIcon' alt='inputIcon' src={inputIcon}/>
                     </div>
-                    <div className='addGame'>
+                    <div className='addGame' onClick={() => history.push('/main/add-game')}>
                         <img alt='addGame' src={addGame}/>
                         <p>ADD <br/> GAME</p>
                     </div>
@@ -250,30 +227,6 @@ const Header: FC<MainPageProps> = () => {
                         <p>HELP</p>
                     </div>
                 </div>
-            </div>
-
-            <div className='swiper'>
-                <Swiper
-                    slidesPerView={3}
-                    spaceBetween={10}
-                    navigation={true}
-                    className="mySwiper"
-                    pagination={{
-                        type: "fraction"
-                    }}
-                    modules={[Navigation]}
-                    loop={true}
-                >
-                    <SwiperSlide>
-                        <img alt={'swiper1'} src={swiper2} />
-                    </SwiperSlide>
-                    <SwiperSlide>
-                        <img alt={'swiper2'} src={swiper1} />
-                    </SwiperSlide>
-                    <SwiperSlide>
-                        <img alt={'swiper3'} src={swiper3} />
-                    </SwiperSlide>
-                </Swiper>
             </div>
         </div>
 

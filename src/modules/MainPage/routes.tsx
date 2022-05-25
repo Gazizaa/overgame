@@ -1,6 +1,7 @@
 import {getDashedStr} from '../../lib/utils/getDashedStr'
 import {IRoute} from '../Auth/types'
 import MainPage from './pages/MainPage'
+import AddGame from './pages/AddGame'
 
 
 enum KEYS {
@@ -13,5 +14,11 @@ export const getRoutes = (key: string): IRoute[] => [
     key: getDashedStr(key, KEYS.MAIN),
     exact: true,
     component: MainPage,
+  },
+  {
+    path: '/main/add-game',
+    key: getDashedStr(key, KEYS.MAIN),
+    exact: true,
+    component: AddGame,
   },
 ]
