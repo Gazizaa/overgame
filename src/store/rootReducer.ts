@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage'
 import authReducer from '../modules/Auth/slices'
 import welcomeReducer from '../modules/WelcomePage/slices'
 import commonReducer from '../modules/common/slices'
+import mainReducer from '../modules/MainPage/slices'
 
 import { moduleName as authModule } from '../modules/Auth/moduleName'
 import { moduleName as welcomeModule } from '../modules/WelcomePage/moduleName'
@@ -15,6 +16,7 @@ const reducers = combineReducers({
   [authModule]: authReducer,
   [welcomeModule]: welcomeReducer,
   [commonModule]: commonReducer,
+  main: mainReducer
 })
 
 export const rootReducer = (state, action) => {

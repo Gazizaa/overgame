@@ -1,232 +1,301 @@
-import React, { FC } from 'react'
+import React, {FC, useEffect, useRef, useState} from 'react'
 import Header from './Header'
 import Footer from './Footer'
 import styled from '@emotion/styled'
+import Modal from 'react-modal'
 
 import plus from '../../../assets/images/plus.png'
 import {Field, Form, Formik} from 'formik'
-import addGame from '../../../assets/images/addGame.png'
 import loginBtn from '../../../assets/images/loginBtn.png'
+import {useAppDispatch, useAppSelector} from '../../../store/hooks'
+import {createGame, getGenres} from '../slices/main'
 
 
 export interface AddGameProps {
 }
 
 const AddGameWrap = styled.div`
-    .mainBox {
-      background: linear-gradient(90deg, #7E007C 0.85%, #5548B2 100.85%);
-      border: 1px solid #F9F871;
-      border-radius: 20px;
-      padding: 40px 40px 90px;
-      width: 80%;
-      margin: 50px auto;
-      
-      p {
-        line-height: 20px;
-        color: white;
+  .mainBox {
+    background: linear-gradient(90deg, #7E007C 0.85%, #5548B2 100.85%);
+    border: 1px solid #F9F871;
+    border-radius: 20px;
+    padding: 40px 40px 90px;
+    width: 80%;
+    margin: 50px auto;
+
+    p {
+      line-height: 20px;
+      color: white;
+    }
+
+    .mainText {
+      text-transform: uppercase;
+      font-size: 20px;
+    }
+
+    .mainBox_2 {
+      display: flex;
+      justify-content: space-between;
+      width: 95%;
+      margin-top: 20px;
+    }
+
+    .column_1 {
+      width: 50%;
+      padding-top: 40px;
+    }
+
+    .addImage {
+      display: flex;
+      justify-content: flex-start;
+      gap: 15px;
+      width: 100%;
+
+      .box1 {
+        background: rgba(255, 255, 255, 0.65);
+        height: 250px;
+        width: 200px;
+        text-align: center;
+        width: 30%;
+        cursor: pointer;
+
+        img {
+          width: 30px;
+          margin-top: 90px;
+          margin-bottom: 20px;
+        }
       }
       
-      .mainText {
-        text-transform: uppercase;
-        font-size: 20px;
-      }
-      
-      .mainBox_2 {
-        display: flex;
-        justify-content: space-between;
-        width: 90%;
-        margin-top: 20px;
-      }
-      
-      .column_1 {
-        width: 45%;
-        padding-top: 40px;
-      }
-      
-      .addImage {
-        display: flex;
-        justify-content: space-between;
-      
-        gap: 20px;
-        
-        .box1 {
-          background: rgba(255, 255, 255, 0.65);
+      .imgBox {
+        img {
           height: 250px;
           width: 200px;
-          text-align: center;
-          
-          img {
-            width: 30px;
-            margin-top: 90px;
-            margin-bottom: 20px;
-          }
         }
-        
-        .form {
-          display: flex;
-          flex-direction: column;
-          
-          input {
-            background: rgba(255, 255, 255, 0.65);
-            border: none;
-            width: 350px;
-            outline: none;
-            height: 30px;
-            margin-bottom: 20px;
-            margin-top: 5px;
-          }
-          
-          label {
-            color: white;
-          }
-          
-          .priceForm {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            
-            input {
-              width: 70px;
-              margin: 0;
-            }
-          }
-        }
+      
       }
-      .description {
-        margin-top: 60px;
-        
+
+      .formik {
+        width: 70%;
+      }
+
+      .form {
+        display: flex;
+        flex-direction: column;
+
         input {
           background: rgba(255, 255, 255, 0.65);
           border: none;
           width: 100%;
           outline: none;
-          height: 180px;
-          margin-top: 20px;
+          height: 30px;
+          margin-bottom: 20px;
+          margin-top: 5px;
+        }
+
+        label {
+          color: white;
+        }
+
+        .priceForm {
+          .price {
+            margin-right: 10px;
+          }
+
+          input {
+            width: 30%;
+            margin: 0;
+          }
+        }
+
+        .submitBtn {
+          display: none;
+        }
+
+
+        input[type=text], input[type=number] {
+          color: white;
+          font-size: 14px;
+          font-family: 'Press Start 2P', cursive;
         }
       }
+    }
 
-      .uploadImage {
-        width: 45%;
-        text-align: center;
+    .description {
+      margin-top: 40px;
 
-        & > p {
-          font-size: 20px;
-        }
+      textarea {
+        background: rgba(255, 255, 255, 0.65);
+        border: none;
+        width: 100%;
+        outline: none;
+        height: 180px;
+        margin-top: 20px;
+        color: white;
+        font-size: 14px;
+        font-family: 'Press Start 2P', cursive;
+        padding-top: 10px;
+        padding-left: 10px;
+        line-height: 20px;
+      }
+    }
 
-        .importFile {
-          border: none;
-          background: none;
-          background: #D0BCFF;
-          border-radius: 20px;
-          padding: 10px;
+    .uploadImage {
+      width: 45%;
+      text-align: center;
+      padding-top: 80px;
+      margin-bottom: 40px;
+
+      & > p {
+        font-size: 22px;
+      }
+
+      .genres {
+        display: grid;
+        gap: 15px;
+        grid-template-columns: repeat(4, 150px);
+        align-items: center;
+        grid-template-rows: repeat(4, 54px);
+        margin-top: 60px;
+
+
+        .genreBox {
+          background: #5548B2;
+          border: 2px solid #F9F871;
+          border-radius: 25px;
+          padding: 8px;
+
+          :hover {
+            background: #4335a6;
+          }
 
           p {
-            color: #381E72;
-          }
-        }
-        
-        .row_1 {
-          display: flex;
-          justify-content: space-evenly;
-          align-items: center;
-          margin-top: 40px;
-          margin-bottom: 30px;
-          
-          
-          img {
-            width: 60px;
-          }
-        }
-        
-        .genre, .genre4 {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-top: 20px;
-          
-          .genreBox, .genreBox2, .genreBox3, .genreBox4  {
-            background: #5548B2;
-            border: 2px solid #F9F871;
-            border-radius: 25px;
-            padding: 10px;
-            margin-right: 40px;
-            
-          }
-          
-          .genreBox2 {
-            margin-right: 35px;
+            font-size: 12px;
           }
 
-          .genreBox3 {
-            margin-right: 25px;
-          }
+        }
 
-          .genreBox4{
-            margin-right: 70px;
-          }
-          
+        #selected {
+          background: #3b2ba1;
+        }
+
+
+        .lastBox {
+          background: #5548B2;
+          border: 2px solid #F9F871;
+          border-radius: 25px;
+          padding: 8px;
+          position: relative;
+          left: 230px;
         }
       }
-      
-      .gallery {
-        padding-top: 30px;
-        
-       & > p {
-          font-size: 20px;
-          padding-bottom: 30px;
-        }
-        
-        .galleryBox {
-          background: rgba(255, 255, 255, 0.65);
-          padding: 20px;
-          height: 300px;
-          
-         & > p {
-            color: #5548B2;
-            font-size: 15px;
-            padding-top: 90px;
-           padding-bottom: 40px;
-            line-height: 40px;
-          }
+    }
 
-          .importFile2 {
-            border: none;
-            background: none;
-            background: #D0BCFF;
-            border-radius: 20px;
-            padding: 10px;
+    .register {
+      width: 115%;
+      display: flex;
+      justify-content: center;
+      margin-top: 80px;
 
-            p {
-              color: #381E72;
-              font-size: 12px;
-            }
-          }
-        }
-      }
-
-      .register button {
+      button {
         background: url(${loginBtn}) no-repeat;
         height: 86px;
-        width: 161px;
+        width: 200px;
         border: none;
         -webkit-background-size: 160px;
-        background-size: 160px;
+        background-size: 200px;
         background-position-y: center;
 
         p {
           position: relative;
           bottom: 2px;
-          font-size: 16px;
+          font-size: 20px;
         }
       }
-      
-      
-      
+
     }
+  }
+
+  .ReactModal__Overlay .modal {
+    p {
+      color: #F9F871; !important;
+    }
+  }
 `
 
 const AddGame: FC<AddGameProps> = () => {
-  return (
+    const dispatch = useAppDispatch()
+    const ref = useRef(null)
+    const imageRef = useRef(null)
+    const [descriptionRu, setDescriptionRu] = useState('')
+    const [descriptionEn, setDescriptionEn] = useState('')
+    const [genreIds, setGenreIds] = useState([])
+    const [fileUrl, setFileUrl] = useState<any>(null)
+    const [file, setFile] = useState<any>(null)
+    const [modalIsOpen, setIsOpen] = useState(false);
+
+    const genres = useAppSelector(
+        state => state.main.main.genres
+    )
+
+    useEffect(() => {
+        dispatch(getGenres())
+    }, [])
+
+
+    const offer = () => {
+        if (ref.current) {
+            ref.current.click()
+        }
+    }
+
+    const saveGenres = checkedId => {
+        setGenreIds(prevState => {
+            const arr = [...prevState]
+            return arr.some(item => item === checkedId)
+                ? arr.filter(item => item !== checkedId)
+                : [...arr, checkedId]
+        })
+    }
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setFileUrl(URL.createObjectURL(e.target.files[0]))
+            setFile(e.target.files[0])
+        }
+    }
+
+    const importFile = () => {
+        if (imageRef.current) {
+            imageRef.current.click()
+        }
+    }
+
+    const openModal = () => {
+        setIsOpen(true)
+    }
+
+    const closeModal = () => {
+        setIsOpen(false)
+    }
+
+    const customStyles = {
+        content: {
+            background: 'linear-gradient(90deg, #7E007C 0.85%, #5548B2 100.85%)',
+            border: '1px solid #F9F871',
+            borderRadius: '28px',
+            width: '350px',
+            height: '250px',
+            textAlign: 'center',
+            margin: 'auto',
+        },
+
+        overlay: {
+            color: '#F9F871',
+            lineHeight: '25px',
+        }
+    }
+
+    return (
     <AddGameWrap>
         <Header/>
         <div className='mainBox'>
@@ -234,72 +303,102 @@ const AddGame: FC<AddGameProps> = () => {
             <div className='mainBox_2'>
                 <div className='column_1'>
                     <div className='addImage'>
-                        <div className={'box1'}>
-                            <img src={plus} alt={'plus'}/>
-                            <p style={{color: '#5548B2'}}>Add <br/> Image</p>
-                        </div>
-                        <div className='formik'>
+                        {!fileUrl ? (
+                                <div className={'box1'} onClick={importFile}>
+                                    <img src={plus} alt={'plus'}/>
+                                    <p style={{color: '#5548B2'}}>Add <br/> Image</p>
+                                    <input
+                                        ref={imageRef}
+                                        type="file"
+                                        id="file"
+                                        name="file"
+                                        accept=".jpg,.jpeg,"
+                                        onChange={onChange}
+                                        style={{display: 'none'}}
+                                    />
+                                </div>
+                            )
+                            : (
+                                <div className='imgBox'>
+                                    <img src={fileUrl} alt="img"/>
+                                </div>
+                            )
+                        }
+                        <div className="formik">
                             <Formik
                                 initialValues={{
                                     title: '',
                                     title2: '',
                                     link: '',
                                     price: '',
-                                    free: '',
                                 }}
-                                onSubmit={values => {
-                                    console.log(values)
+                                onSubmit={(values, { resetForm }) => {
+                                    dispatch(createGame({
+                                        game: {
+                                            name: {
+                                                ru: values.title,
+                                                en: values.title2
+                                            },
+                                            gameLink: values.link,
+                                            price: Number(values.price),
+                                            genreIds,
+                                            description: {
+                                                ru: descriptionRu,
+                                                en: descriptionEn
+                                            }
+                                        },
+                                        imgFile: file
+                                    }))
+                                    openModal()
+                                    resetForm()
+                                    setFile(null)
+                                    setFileUrl(null)
+                                    setGenreIds([])
+                                    setDescriptionEn('')
+                                    setDescriptionRu('')
+
                                 }}
                             >
                                 {({errors, touched}) => (
-                                    <Form className='form' autoComplete='off'>
+                                    <Form className="form" autoComplete="off">
                                         <label htmlFor="title">Title RU</label>
-                                        <Field type='text' id='title' name="title"  readonly/>
+                                        <Field type="text" id="title" name="title"/>
                                         {touched.title && errors.title &&
-                                            <div className='errorMessage'>
+                                            <div className="errorMessage">
                                                 {errors.title}
                                             </div>
                                         }
 
                                         <label htmlFor="title2">Title ENG</label>
-                                        <Field type='text' id='title2' name="title2"  readonly/>
+                                        <Field type="text" id="title2" name="title2"/>
                                         {touched.title2 && errors.title2 &&
-                                            <div className='errorMessage'>
+                                            <div className="errorMessage">
                                                 {errors.title2}
                                             </div>
                                         }
 
                                         <label htmlFor="link">Game Link</label>
-                                        <Field type='text' id='link' name="link"  readonly/>
+                                        <Field type="text" id="link" name="link"/>
                                         {touched.link && errors.link &&
-                                            <div className='errorMessage'>
+                                            <div className="errorMessage">
                                                 {errors.link}
                                             </div>
                                         }
-                                        <div className='priceForm'>
-                                            <label htmlFor="price">Price</label>
-                                            <Field type='text' id='price' name="price" readonly/>
+                                        <div className="priceForm">
+                                            <label htmlFor="price" className='price'>Price</label>
+                                            <Field type="number" id="price" name="price"/>
                                             {touched.price && errors.price &&
-                                                <div className='errorMessage'>
+                                                <div className="errorMessage">
                                                     {errors.price}
-                                                </div>
-                                            }
-
-                                            <label htmlFor="free">Free</label>
-                                            <Field type='text' id='free' name="free"  readonly/>
-                                            {touched.free && errors.free &&
-                                                <div className='errorMessage'>
-                                                    {errors.free}
                                                 </div>
                                             }
                                         </div>
 
-                                        {/*<div className='submitBtn'>*/}
-                                        {/*    <button type="submit">*/}
-                                        {/*        <p>Login</p>*/}
-                                        {/*    </button>*/}
-                                        {/*</div>*/}
-
+                                        <div className="submitBtn">
+                                            <button type="submit" ref={ref}>
+                                                <p>Login</p>
+                                            </button>
+                                        </div>
                                     </Form>
                                 )}
                             </Formik>
@@ -307,91 +406,57 @@ const AddGame: FC<AddGameProps> = () => {
                     </div>
                     <div className='description'>
                         <p>Description RU</p>
-                        <input readOnly/>
+                        <textarea
+                            name="text"
+                            value={descriptionRu}
+                            onChange={e => setDescriptionRu(e.target.value)}
+                        />
                     </div>
                     <div className='description'>
                         <p>Description ENG</p>
-                        <input readOnly/>
+                        <textarea
+                            name="text"
+                            value={descriptionEn}
+                            onChange={e => setDescriptionEn(e.target.value)}
+                        />
                     </div>
                 </div>
                 <div className='uploadImage'>
-                    <p>Upload game file</p>
-                    <div className='row_1'>
-                        <img alt='addGame' src={addGame}/>
-                        <button type="button" className='importFile'>
-                            <p>Choose File</p>
-                        </button>
-                    </div>
                     <p>Choose genre</p>
-                    <div>
-                        <div className='genre'>
-                            <div className='genreBox'>
-                                <p>Action</p>
-                            </div>
-                            <div className='genreBox'>
-                                <p>Arcade</p>
-                            </div>
-                            <div className='genreBox'>
-                                <p>Adventure</p>
-                            </div>
-                            <div className='genreBox'>
-                                <p>Race</p>
-                            </div>
-                        </div>
-                        <div className='genre'>
-                            <div className='genreBox2'>
-                                <p>Clicker</p>
-                            </div>
-                            <div className='genreBox2'>
-                                <p>Fighting</p>
-                            </div>
-                            <div className='genreBox2'>
-                                <p>Logic</p>
-                            </div>
-                            <div className='genreBox2'>
-                                <p>RPG</p>
-                            </div>
-                        </div>
-                        <div className='genre'>
-                            <div className='genreBox3'>
-                                <p>Sport</p>
-                            </div>
-                            <div className='genreBox3'>
-                                <p>Shooting</p>
-                            </div>
-                            <div className='genreBox3'>
-                                <p>Paid</p>
-                            </div>
-                            <div className='genreBox3'>
-                                <p>Sandbox</p>
-                            </div>
-                        </div>
-                        <div className='genre4'>
-                            <div className='genreBox4'>
-                                <p>Two player games</p>
-                            </div>
-                            <div className='genreBox4'>
-                                <p className='other'>Others</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div className='gallery'>
-                        <p>Upload gallery</p>
-                        <div className="galleryBox">
-                            <p>Drag photo/video here <br/> or</p>
-                            <button type="button" className="importFile2">
-                                <p>Choose File</p>
+                    <div className='genres'>
+                        {genres?.map(genre => (
+                            <button
+                                className={
+                                    genre.id === 25 ?
+                                        'lastBox'
+                                        : 'genreBox'
+                                }
+                                id={genreIds.some(item => item === genre.id) ? 'selected' : ''}
+                                key={genre.id}
+                                onClick={() => saveGenres(genre.id)}
+                            >
+                                <p>{genre.name}</p>
                             </button>
-                        </div>
+                        ))}
                     </div>
                     <div className="register">
-                        <button type="submit">
+                        <button onClick={offer}>
                             <p>OFFER</p>
                         </button>
                     </div>
                 </div>
             </div>
         </div>
+        <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            style={customStyles}
+        >
+            <div className='modal'>
+                <p style={{paddingBottom: '40px', paddingTop: '20px'}}>You successfully offered your own game!</p>
+                <p>Please wait till moderators will check your game for further upload.</p>
+            </div>
+        </Modal>
         <Footer/>
     </AddGameWrap>
   )

@@ -189,7 +189,9 @@ const Header: FC<MainPageProps> = () => {
                             }
                             </p>
                         </div>
-                        <p>PROFILE</p>
+                        <Link to='/main/profile'>
+                            <p>PROFILE</p>
+                        </Link>
                         <p>CHANGE USER</p>
                         <p onClick={handleClick}>LOGOUT</p>
                     </div>
