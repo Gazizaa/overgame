@@ -10,6 +10,8 @@ import bril from '../../../assets/images/bril.png'
 import {useAppDispatch, useAppSelector} from '../../../store/hooks'
 import {moduleName as commonModule} from '../../common/moduleName'
 import {getFavouriteDeveloper, getFavouriteGame, getGenres} from '../slices/main'
+import {useHistory} from 'react-router-dom'
+import {getGameDetail} from '../../GamePage/slices/gameDetails'
 
 
 export interface MainPageProps {
@@ -154,6 +156,7 @@ const ProfilePagerWrap = styled.div`
       img {
         width: 100%;
         min-height: 120px;
+        cursor: pointer;
       }
       
       .btn {
@@ -203,12 +206,16 @@ const ProfilePagerWrap = styled.div`
       margin-bottom: 20px;
     }
   }
+  
+  .recommendation {
+    margin: 20px;
+  }
 `
 
 
 const ProfilePage: FC<MainPageProps> = () => {
     const dispatch = useAppDispatch()
-
+    const history = useHistory()
 
     const { profile } = useAppSelector(state => state[commonModule].profile)
     const { games, developer } = useAppSelector(state => state.main.main)
@@ -269,7 +276,14 @@ const ProfilePage: FC<MainPageProps> = () => {
                     {games?.map(game => (
                         <div key={game?.id} className='gameBox'>
                             <p className={'gameName'}>{game?.name}</p>
-                            <img src={game?.imgLink} alt={'gameImg'}/>
+                            <img
+                                src={game?.imgLink}
+                                alt={'gameImg'}
+                                onClick={() => {
+                                    history.push(`/game/${game?.id}`)
+                                    dispatch(getGameDetail(game?.id))
+                                }}
+                            />
                             <div className='btn'>
                                 <a href={game?.gameLink} target="_blank">
                                     <button>
