@@ -15,7 +15,7 @@ const RouteWithSubRoutes = route => {
 const RenderRoutes = ({ routes }) => {
   return (
     <Switch>
-      {routes.map(route => (
+      {routes?.map(route => (
         <RouteWithSubRoutes key={route.key} {...route} />
       ))}
       <Route component={() => <NotFound />} />

@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios'
 
 import {AppThunk, instance} from '../../../store'
 import {thunkErrorHandler} from '../../../settings/errorHandler'
-import {CreateGameParams, Genres, MainState} from '../types'
+import {CreateGameParams, Developer, Games, Genres, MainState} from '../types'
 
 
 
@@ -47,6 +47,24 @@ export const createGame: AppThunk<void, CreateGameParams> = createAsyncThunk(
             .catch(thunkErrorHandler(thunkApi))
     })
 
+export const getFavouriteGame: AppThunk<Games[]> = createAsyncThunk(
+    'main/get_favourite_games',
+    (_, thunkApi) =>
+        instance(thunkApi)
+            .get('/v1/favourite/games')
+            .then((res: AxiosResponse<Games[]>) => res.data)
+            .catch(thunkErrorHandler(thunkApi)),
+)
+
+export const getFavouriteDeveloper: AppThunk<Developer[]> = createAsyncThunk(
+    'main/get_favourite_developer',
+    (_, thunkApi) =>
+        instance(thunkApi)
+            .get('/v1/favourite/developer')
+            .then((res: AxiosResponse<Developer[]>) => res.data)
+            .catch(thunkErrorHandler(thunkApi)),
+)
+
 /**
  * Reducer
  */
@@ -54,7 +72,9 @@ export const createGame: AppThunk<void, CreateGameParams> = createAsyncThunk(
 const initialState: MainState= {
     loading: false,
     error: null,
-    genres: []
+    genres: [],
+    games: [],
+    developer: []
 }
 
 const mainSlice = createSlice({
@@ -85,6 +105,32 @@ const mainSlice = createSlice({
                 state.loading = false
             })
             .addCase(createGame.rejected, (state, {payload}) => {
+                state.error = payload
+                state.loading = false
+            })
+            .addCase(getFavouriteGame.pending, state => {
+                state.error = null
+                state.loading = true
+            })
+            .addCase(getFavouriteGame.fulfilled, (state, {payload}) => {
+                state.games = payload
+                state.error = null
+                state.loading = false
+            })
+            .addCase(getFavouriteGame.rejected, (state, {payload}) => {
+                state.error = payload
+                state.loading = false
+            })
+            .addCase(getFavouriteDeveloper.pending, state => {
+                state.error = null
+                state.loading = true
+            })
+            .addCase(getFavouriteDeveloper.fulfilled, (state, {payload}) => {
+                state.developer = payload
+                state.error = null
+                state.loading = false
+            })
+            .addCase(getFavouriteDeveloper.rejected, (state, {payload}) => {
                 state.error = payload
                 state.loading = false
             })

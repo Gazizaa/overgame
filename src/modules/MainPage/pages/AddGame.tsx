@@ -233,8 +233,8 @@ const AddGame: FC<AddGameProps> = () => {
     const [file, setFile] = useState<any>(null)
     const [modalIsOpen, setIsOpen] = useState(false);
 
-    const genres = useAppSelector(
-        state => state.main.main.genres
+    const {genres, error} = useAppSelector(
+        state => state.main.main
     )
 
     useEffect(() => {
@@ -295,6 +295,9 @@ const AddGame: FC<AddGameProps> = () => {
         }
     }
 
+
+    console.log(error)
+
     return (
     <AddGameWrap>
         <Header/>
@@ -349,7 +352,7 @@ const AddGame: FC<AddGameProps> = () => {
                                         },
                                         imgFile: file
                                     }))
-                                    openModal()
+                                    {error.error !== 'Bad Request' && openModal()}
                                     resetForm()
                                     setFile(null)
                                     setFileUrl(null)

@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import {Link, useHistory} from 'react-router-dom'
+import {Link, useHistory, useLocation} from 'react-router-dom'
 import {useAppDispatch, useAppSelector} from '../../../store/hooks'
 import styled from '@emotion/styled'
 
@@ -166,6 +166,7 @@ export interface MainPageProps {
 const Header: FC<MainPageProps> = () => {
     const dispatch = useAppDispatch()
     const history = useHistory()
+    let { pathname } = useLocation()
     const { profile } = useAppSelector(state => state[commonModule].profile)
 
     const handleClick = () => {
@@ -176,26 +177,28 @@ const Header: FC<MainPageProps> = () => {
     <HeaderWrap>
         <div>
             <div className='nav'>
-                <div className='profile'>
-                    <div className='imgBox'>
-                        <img src={profile?.id !== null ? profile?.imgUrl : profileImg} alt='profileImg'/>
-                    </div>
-                    <div className='profileBox'>
-                        <div className='name'>
-                            <p className='profileName'>
-                                {profile?.id !== null
-                                ? profile?.username
-                                : 'GUEST'
-                            }
-                            </p>
+                {pathname === '/main/profile' ? ''
+                    : <div className="profile">
+                        <div className="imgBox">
+                            <img src={profile?.id !== null ? profile?.imgUrl : profileImg} alt="profileImg"/>
                         </div>
-                        <Link to='/main/profile'>
-                            <p>PROFILE</p>
-                        </Link>
-                        <p>CHANGE USER</p>
-                        <p onClick={handleClick}>LOGOUT</p>
+                        <div className="profileBox">
+                            <div className="name">
+                                <p className="profileName">
+                                    {profile?.id !== null
+                                        ? profile?.username
+                                        : 'GUEST'
+                                    }
+                                </p>
+                            </div>
+                            <Link to="/main/profile">
+                                <p>PROFILE</p>
+                            </Link>
+                            <p>CHANGE USER</p>
+                            <p onClick={handleClick}>LOGOUT</p>
+                        </div>
                     </div>
-                </div>
+                }
                 <div className='navbar'>
                     <Link to='/main'>
                         <div className='OG'>
