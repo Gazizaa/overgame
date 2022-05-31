@@ -1,11 +1,13 @@
-import React, {FC, useEffect} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 import styled from '@emotion/styled'
+import Modal from 'react-modal'
 import Header from '../../MainPage/pages/Header'
 import Footer from '../../MainPage/pages/Footer'
 import loginBtn from '../../../assets/images/loginBtn.png'
 import like from '../../../assets/images/like.png'
 import rating from '../../../assets/images/rating.png'
-import {useAppSelector} from '../../../store/hooks'
+import {useAppDispatch, useAppSelector} from '../../../store/hooks'
+import {favouriteDeveloper, favouriteGame} from "../slices/gameDetails";
 
 export interface MainPageProps {
 }
@@ -121,6 +123,12 @@ const GamePageWrap = styled.div`
       }
     }
     
+    .author {
+      display: flex;
+      margin: 40px 20px 0;
+      padding-left: 15px;
+    }
+    
     .linkPlay {
       margin-left: 30px;
       margin-top: 30px;
@@ -209,6 +217,7 @@ const GamePageWrap = styled.div`
             img {
               width: 50px;
               margin-right: 20px;
+              cursor: pointer;
             }
           }
           
@@ -263,12 +272,40 @@ const GamePageWrap = styled.div`
 
 
 const GamePage: FC<MainPageProps> = () => {
+    const dispatch = useAppDispatch()
+
+    const [modalIsOpen, setIsOpen] = useState(false);
 
     const { gameDetails } = useAppSelector(state => state.gameDetails.gameDetails)
 
     useEffect(() => {
 
     }, [])
+
+    const openModal = () => {
+        setIsOpen(true)
+    }
+
+    const closeModal = () => {
+        setIsOpen(false)
+    }
+
+    const customStyles = {
+        content: {
+            background: 'linear-gradient(90deg, #7E007C 0.85%, #5548B2 100.85%)',
+            border: '1px solid #F9F871',
+            borderRadius: '28px',
+            width: '350px',
+            height: '250px',
+            textAlign: 'center',
+            margin: 'auto',
+        },
+
+        overlay: {
+            color: '#F9F871',
+            lineHeight: '25px',
+        }
+    }
 
 
   return (
@@ -335,8 +372,11 @@ const GamePage: FC<MainPageProps> = () => {
                         <img src={gameDetails?.creator?.img} />
                         <p>{gameDetails?.creator?.username}</p>
                     </div>
-                    <div>
-                        <button>
+                    <div className='addToFav'>
+                        <button onClick={() => {
+                            dispatch(favouriteDeveloper(gameDetails.id))
+                            openModal()
+                        }}>
                             <p>add to favourite</p>
                         </button>
                     </div>
@@ -351,8 +391,11 @@ const GamePage: FC<MainPageProps> = () => {
                     </div>
 
                     <div className={'fullImgBox2'}>
-                        <div className='like'>
-                            <img src={like} alt={'photo'}/>
+                        <div className='like' >
+                            <img src={like} alt={'photo'} onClick={() => {
+                                dispatch(favouriteGame(gameDetails?.id))
+                                openModal()
+                            }}/>
                         </div>
                         <div className='likeText'>
                             <p>Like to add for your favourite games</p>
@@ -383,6 +426,16 @@ const GamePage: FC<MainPageProps> = () => {
             </div>
 
         </div>
+
+        <Modal
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            style={customStyles}
+        >
+            <div className='modal'>
+                <p style={{paddingTop: '80px'}}>You successfully added to favourite!</p>
+            </div>
+        </Modal>
         <Footer/>
     </GamePageWrap>
   )

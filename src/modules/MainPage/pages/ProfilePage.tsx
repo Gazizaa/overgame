@@ -133,7 +133,7 @@ const ProfilePagerWrap = styled.div`
   .gamesBoxGrid {
     display: grid;
     gap: 10px;
-    grid-template-columns: repeat(3, 150px);
+    grid-template-columns: repeat(3, 1fr);
     justify-content: space-between;
     margin-top: 30px;
     width: 90%;
@@ -142,7 +142,7 @@ const ProfilePagerWrap = styled.div`
       background: linear-gradient(90deg, #7E007C 0.85%, #5548B2 100.85%);
       border: 2px solid #F9F871;
       border-radius: 12px;
-      width: 200px;
+      width: 240px;
       display: flex;
       flex-direction: column;
       align-items: center;

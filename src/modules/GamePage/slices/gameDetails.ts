@@ -21,6 +21,24 @@ export const getGameDetail: AppThunk<Games, number> = createAsyncThunk(
             .catch(thunkErrorHandler(thunkApi)),
 )
 
+export const favouriteDeveloper: AppThunk<void, number> = createAsyncThunk(
+    'game/favouriteDeveloper',
+    (developerId, thunkApi) =>
+        instance(thunkApi)
+            .post(`/v1/favourite/developer/${developerId}`)
+            .then((res: AxiosResponse<void>) => res.data)
+            .catch(thunkErrorHandler(thunkApi)),
+)
+
+export const favouriteGame: AppThunk<void, number> = createAsyncThunk(
+    'game/favouriteGame',
+    (gameId, thunkApi) =>
+        instance(thunkApi)
+            .post(`/v1/favourite/games/${gameId}`)
+            .then((res: AxiosResponse<void>) => res.data)
+            .catch(thunkErrorHandler(thunkApi)),
+)
+
 
 /**
  * Reducer
@@ -51,6 +69,31 @@ const gameDetailsSlice = createSlice({
                 state.error = payload
                 state.loading = false
             })
+            .addCase(favouriteDeveloper.pending, state => {
+                state.error = null
+                state.loading = true
+            })
+            .addCase(favouriteDeveloper.fulfilled, state => {
+                state.error = null
+                state.loading = false
+            })
+            .addCase(favouriteDeveloper.rejected, (state, {payload}) => {
+                state.error = payload
+                state.loading = false
+            })
+            .addCase(favouriteGame.pending, state => {
+                state.error = null
+                state.loading = true
+            })
+            .addCase(favouriteGame.fulfilled, state => {
+                state.error = null
+                state.loading = false
+            })
+            .addCase(favouriteGame.rejected, (state, {payload}) => {
+                state.error = payload
+                state.loading = false
+            })
+
 })
 
 export default gameDetailsSlice.reducer

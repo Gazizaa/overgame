@@ -295,9 +295,6 @@ const AddGame: FC<AddGameProps> = () => {
         }
     }
 
-
-    console.log(error)
-
     return (
     <AddGameWrap>
         <Header/>
@@ -352,7 +349,7 @@ const AddGame: FC<AddGameProps> = () => {
                                         },
                                         imgFile: file
                                     }))
-                                    {error.error !== 'Bad Request' && openModal()}
+                                    openModal()
                                     resetForm()
                                     setFile(null)
                                     setFileUrl(null)
