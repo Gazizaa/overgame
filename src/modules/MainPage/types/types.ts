@@ -50,3 +50,31 @@ export type Developer = {
   username: string,
   img: string
 }
+
+export type SwiperImages = {
+  code: string,
+  description: {
+    additionalProp1: string,
+    additionalProp2: string,
+    additionalProp3: string
+  },
+  id: number,
+  imgUrl: string,
+  name: {
+    additionalProp1: string,
+    additionalProp2: string,
+    additionalProp3: string
+  }
+}
+
+export type AllDevelopers = {
+  dateOfBirth: string,
+  email: string,
+  id: number,
+  img: string,
+  imgUrl: string,
+  roleCode: string,
+  username: string
+}
+
+

@@ -326,6 +326,10 @@ const GamePage: FC<MainPageProps> = () => {
                     </p>
                 </div>
 
+                <div className='author'>
+                    <p>AUTHOR</p>
+                </div>
+
                 <div className='column4'>
                     <div className={'creator'}>
                         <img src={gameDetails?.creator?.img} />

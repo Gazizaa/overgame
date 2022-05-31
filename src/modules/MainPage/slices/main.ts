@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios'
 
 import {AppThunk, instance} from '../../../store'
 import {thunkErrorHandler} from '../../../settings/errorHandler'
-import {CreateGameParams, Developer, Games, Genres, MainState} from '../types'
+import {AllDevelopers, CreateGameParams, Developer, Games, Genres, MainState, SwiperImages} from '../types'
 
 
 
@@ -65,6 +65,37 @@ export const getFavouriteDeveloper: AppThunk<Developer[]> = createAsyncThunk(
             .catch(thunkErrorHandler(thunkApi)),
 )
 
+export const getSwiperImages: AppThunk<SwiperImages[]> = createAsyncThunk(
+    'main/get_swiper_img',
+    (_, thunkApi) =>
+        instance(thunkApi)
+            .get('/v1/banners')
+            .then((res: AxiosResponse<SwiperImages[]>) => res.data)
+            .catch(thunkErrorHandler(thunkApi)),
+)
+
+export const getDevelopers: AppThunk<AllDevelopers[]> = createAsyncThunk(
+    'main/get_all_developers',
+    (_, thunkApi) =>
+        instance(thunkApi)
+            .get('/v1/users/developers')
+            .then((res: AxiosResponse<AllDevelopers[]>) => res.data)
+            .catch(thunkErrorHandler(thunkApi)),
+)
+
+export const getRecommendedGames: AppThunk<Games[]> = createAsyncThunk(
+    'main/get_recommended_games',
+    (_, thunkApi) =>
+        instance(thunkApi)
+            .get('/v1/games/by-status', {
+                params: {
+                    status: 'ACCEPTED'
+                }
+            })
+            .then((res: AxiosResponse<Games[] | any>) => res.data.content)
+            .catch(thunkErrorHandler(thunkApi)),
+)
+
 /**
  * Reducer
  */
@@ -74,7 +105,10 @@ const initialState: MainState= {
     error: null,
     genres: [],
     games: [],
-    developer: []
+    developer: [],
+    swiperImg: [],
+    allDevelopers: [],
+    recommendedGames: []
 }
 
 const mainSlice = createSlice({
@@ -131,6 +165,45 @@ const mainSlice = createSlice({
                 state.loading = false
             })
             .addCase(getFavouriteDeveloper.rejected, (state, {payload}) => {
+                state.error = payload
+                state.loading = false
+            })
+            .addCase(getSwiperImages.pending, state => {
+                state.error = null
+                state.loading = true
+            })
+            .addCase(getSwiperImages.fulfilled, (state, {payload}) => {
+                state.swiperImg = payload
+                state.error = null
+                state.loading = false
+            })
+            .addCase(getSwiperImages.rejected, (state, {payload}) => {
+                state.error = payload
+                state.loading = false
+            })
+            .addCase(getDevelopers.pending, state => {
+                state.error = null
+                state.loading = true
+            })
+            .addCase(getDevelopers.fulfilled, (state, {payload}) => {
+                state.allDevelopers = payload
+                state.error = null
+                state.loading = false
+            })
+            .addCase(getDevelopers.rejected, (state, {payload}) => {
+                state.error = payload
+                state.loading = false
+            })
+            .addCase(getRecommendedGames.pending, state => {
+                state.error = null
+                state.loading = true
+            })
+            .addCase(getRecommendedGames.fulfilled, (state, {payload}) => {
+                state.recommendedGames = payload
+                state.error = null
+                state.loading = false
+            })
+            .addCase(getRecommendedGames.rejected, (state, {payload}) => {
                 state.error = payload
                 state.loading = false
             })

@@ -1,4 +1,4 @@
-import {Developer, Games, Genres} from './types'
+import {AllDevelopers, Developer, Games, Genres, SwiperImages} from './types'
 
 export interface MainState {
   genres: Genres[]
@@ -6,4 +6,7 @@ export interface MainState {
   error: any
   games: Games[]
   developer: Developer[]
+  swiperImg: SwiperImages[]
+  allDevelopers: AllDevelopers[]
+  recommendedGames: Games[]
 }

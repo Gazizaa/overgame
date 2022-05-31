@@ -26,7 +26,7 @@ class ErrorBoundary extends React.Component<{children}, ErrorBoundaryState> {
 
   render() {
     if (this.state.hasError) {
-      return <div style={{color: 'white', fontWeight: 600, padding: '20px'}}>Error</div>
+      return <div style={{color: 'white', fontWeight: 600, padding: '20px', textAlign: 'center'}}>Error</div>
     }
 
     return this.props.children

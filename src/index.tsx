@@ -23,7 +23,7 @@ const Index: FC = () => {
     return (
         <React.StrictMode>
             <StoreProvider store={store}>
-                {/*<ErrorBoundary>*/}
+                <ErrorBoundary>
                     <PersistGate persistor={persistor}>
                         <PreloadProvider>
                             <CookiesProvider>
@@ -33,7 +33,7 @@ const Index: FC = () => {
                             </CookiesProvider>
                         </PreloadProvider>
                     </PersistGate>
-                {/*</ErrorBoundary>*/}
+                </ErrorBoundary>
             </StoreProvider>
         </React.StrictMode>
     )

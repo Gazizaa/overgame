@@ -1,10 +1,12 @@
-import React, { FC } from 'react'
+import React, {FC, useEffect} from 'react'
 import Header from './Header'
 import Footer from './Footer'
 import Body from './Body'
 import SwiperPage from './SwiperPage'
 import backgroundImage from '../../../assets/images/HeaderBackground.png'
 import styled from '@emotion/styled'
+import {useAppDispatch} from "../../../store/hooks";
+import {getDevelopers, getRecommendedGames, getSwiperImages} from "../slices/main";
 
 
 export interface MainPageProps {
@@ -25,6 +27,15 @@ const MainPagerWrap = styled.div`
 
 
 const MainPage: FC<MainPageProps> = () => {
+    const dispatch = useAppDispatch()
+
+
+    useEffect(() => {
+        dispatch(getSwiperImages())
+        dispatch(getDevelopers())
+        dispatch(getRecommendedGames())
+    }, [])
+
   return (
     <MainPagerWrap>
         <div className='header'>
