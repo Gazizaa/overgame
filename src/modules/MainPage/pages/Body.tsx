@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 
 import profileImg from '../../../assets/images/profileImg.png'
 import {useAppDispatch, useAppSelector} from "../../../store/hooks";
-import {getGameDetail} from "../../GamePage/slices/gameDetails";
+import {getComment, getGameDetail} from '../../GamePage/slices/gameDetails'
 import {useHistory} from "react-router-dom";
 
 const BodyWrap = styled.div`
@@ -129,7 +129,7 @@ const Body: FC<BodyProps> = () => {
             }
         </div>
         <div className='recommendation'>
-            <p>Recomendations for today</p>
+            <p>Game catalog</p>
         </div>
         <div className='recommendationImgBox1'>
             {
@@ -140,8 +140,9 @@ const Body: FC<BodyProps> = () => {
                             src={game?.imgLink}
                             alt={'gameImg'}
                             onClick={() => {
-                                history.push(`/game/${game?.id}`)
                                 dispatch(getGameDetail(game?.id))
+                                dispatch(getComment(game?.id))
+                                history.push(`/game/${game?.id}`)
                             }}
                         />
                         <div className='btn'>

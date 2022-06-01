@@ -11,7 +11,7 @@ import {useAppDispatch, useAppSelector} from '../../../store/hooks'
 import {moduleName as commonModule} from '../../common/moduleName'
 import {getFavouriteDeveloper, getFavouriteGame, getGenres, getMyGames} from '../slices/main'
 import {useHistory} from 'react-router-dom'
-import {getGameDetail} from '../../GamePage/slices/gameDetails'
+import {getComment, getGameDetail} from '../../GamePage/slices/gameDetails'
 
 
 export interface MainPageProps {
@@ -224,20 +224,23 @@ const ProfilePagerWrap = styled.div`
       border: 2px solid #F9F871;
       border-radius: 12px;
       width: 240px;
+      height: 220px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      
       .gameName2 {
         font-size: 11px;
         padding: 8px;
         line-height: 15px;
         text-align: center;
       }
-      img {
+      .gameBox2Img{
         width: 100%;
         min-height: 120px;
         cursor: pointer;
+        object-fit: cover;
       }
 
       .btn {
@@ -279,7 +282,8 @@ const ProfilePage: FC<MainPageProps> = () => {
         dispatch(getMyGames(profile?.id))
     }, [])
 
-  return (
+
+    return (
     <ProfilePagerWrap>
         <Header/>
 
@@ -316,19 +320,21 @@ const ProfilePage: FC<MainPageProps> = () => {
                 </div>
                 <div className='listGames'>
                     <p className={'listGameName'}>List of My Games</p>
-                    {games.length === 0 ?
+                    {myGames.length === 0 ?
                         <p className='listGameText2'>You haven’t upload any game yet</p>
                         :
                         <div className='gamesBoxGrid2'>
-                            {games?.map(myGame => (
+                            {myGames?.map(myGame => (
                             <div key={myGame?.id} className='gameBox2'>
                                 <p className={'gameName2'}>{myGame?.name}</p>
                                 <img
+                                    className='gameBox2Img'
                                     src={myGame?.imgLink}
                                     alt={'gameImg'}
                                     onClick={() => {
-                                        history.push(`/game/${myGame?.id}`)
+                                        dispatch(getComment(myGame?.id))
                                         dispatch(getGameDetail(myGame?.id))
+                                        history.push(`/game/${myGame?.id}`)
                                     }}
                                 />
                                 <div className='btn'>
@@ -359,8 +365,9 @@ const ProfilePage: FC<MainPageProps> = () => {
                                 src={game?.imgLink}
                                 alt={'gameImg'}
                                 onClick={() => {
-                                    history.push(`/game/${game?.id}`)
                                     dispatch(getGameDetail(game?.id))
+                                    dispatch(getComment(game?.id))
+                                    history.push(`/game/${game?.id}`)
                                 }}
                             />
                             <div className='btn'>

@@ -101,7 +101,7 @@ export const getMyGames: AppThunk<Games[], number> = createAsyncThunk(
     (id, thunkApi) =>
         instance(thunkApi)
             .get(`/v1/games/users/${id}`)
-            .then((res: AxiosResponse<Games[]>) => res.data)
+            .then((res: AxiosResponse<Games[] | any>) => res.data.content)
             .catch(thunkErrorHandler(thunkApi)),
 )
 

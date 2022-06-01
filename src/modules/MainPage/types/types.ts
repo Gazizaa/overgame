@@ -82,4 +82,22 @@ export type RateParams = {
   grade: number
 }
 
+export type CommentParams = {
+  gameId: number
+  text?: string
+  commentId?: number
+}
+
+export type Comments = {
+  id: number,
+  text: string,
+  gameId: number,
+  userInfo: {
+    id: number,
+    username: string,
+    img: string
+  },
+  dateCreated: number
+}
+
 

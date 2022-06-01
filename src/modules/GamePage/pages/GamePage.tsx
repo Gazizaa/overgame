@@ -7,10 +7,21 @@ import loginBtn from '../../../assets/images/loginBtn.png'
 import like from '../../../assets/images/like.png'
 import emptyHeart from '../../../assets/images/emptyHeart.png'
 import fullHeart from '../../../assets/images/fullHeart.png'
+import comment from '../../../assets/images/comment.png'
 import {useAppDispatch, useAppSelector} from '../../../store/hooks'
-import {favouriteDeveloper, favouriteGame, getGameDetail, ratingGame} from '../slices/gameDetails'
+import {
+    deleteComment,
+    favouriteDeveloper,
+    favouriteGame,
+    getComment,
+    getGameDetail,
+    ratingGame,
+    sendComment
+} from '../slices/gameDetails'
 import {useHistory} from 'react-router-dom'
 import Rating from 'react-rating'
+import profileImg from '../../../assets/images/profileImg.png'
+import {moduleName as commonModule} from '../../common/moduleName'
 
 export interface MainPageProps {
 }
@@ -35,7 +46,7 @@ const GamePageWrap = styled.div`
       padding: 20px;
      
       width: 45%;
-      min-height: 1000px;
+      min-height: 500px;
       
       .column1 {
         display: flex;
@@ -48,6 +59,141 @@ const GamePageWrap = styled.div`
           width: 230px;
           height: 308px;
           object-fit: cover;
+        }
+      }
+      
+      .comment {
+        margin-top: 30px;
+        margin-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        .commentImg {
+          width: 400px;
+        }
+
+        .columnBox {
+          display: flex;
+          align-items: center;
+
+          .orangeInput2 {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FD754A;
+            padding: 10px;
+            width: 800px;
+            input[type=text] {
+              color: white;
+              font-size: 15px;
+              font-family: 'Press Start 2P', cursive;
+            }
+
+            input {
+              border: none;
+              outline: none;
+              height: 60px;
+              width: 330px;
+              background: none;
+
+              ::placeholder {
+                color: white;
+                font-weight: 400;
+                font-family: 'Press Start 2P', cursive;
+                font-size: 15px;
+                padding-left: 10px;
+              }
+            }
+          }
+          
+            .sendCommentImg2{
+              width: 100px;
+              height: 100px;
+            }
+
+          .send2 {
+            button {
+              background: url(${loginBtn}) no-repeat;
+              height: 40px;
+              width: 120px;
+              border: none;
+              -webkit-background-size: 120px;
+              background-size: 120px;
+              background-position-y: center;
+
+              p {
+                position: relative;
+                bottom: 2px;
+                text-transform: uppercase;
+                font-size: 10px;
+                line-height: 15px;
+              }
+            }
+          }
+        }
+        
+        .sendComment{
+          display: flex;
+          align-items: center;
+          margin-top: 350px;
+          height: 100%;
+
+          .imgBox {
+            .sendCommentImg{
+              width: 100px;
+              height: 100px;
+            }
+          }
+          
+          .orangeInput {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #FD754A;
+            padding: 10px;
+            width: 800px;
+            input[type=text] {
+              color: white;
+              font-size: 15px;
+              font-family: 'Press Start 2P', cursive;
+            }
+            
+            input {
+              border: none;
+              outline: none;
+              height: 60px;
+              width: 330px;
+              background: none;
+              
+              ::placeholder {
+                color: white;
+                font-weight: 400;
+                font-family: 'Press Start 2P', cursive;
+                font-size: 15px;
+                padding-left: 10px;
+              }
+            }
+          }
+          
+          .send {
+            button {
+              background: url(${loginBtn}) no-repeat;
+              height: 40px;
+              width: 120px;
+              border: none;
+              -webkit-background-size: 120px;
+              background-size: 120px;
+              background-position-y: center;
+
+              p {
+                position: relative;
+                bottom: 2px;
+                text-transform: uppercase;
+                font-size: 10px;
+                line-height: 15px;
+              }
+            }
+          }
+          
         }
       }
     }
@@ -352,12 +498,16 @@ const GamePage: FC<MainPageProps> = () => {
     const dispatch = useAppDispatch()
     const history = useHistory()
 
-    const [modalIsOpen, setIsOpen] = useState(false);
+    const [modalIsOpen, setIsOpen] = useState(false)
+    const [valueComment, setValueComment] = useState('')
 
-    const { gameDetails } = useAppSelector(state => state.gameDetails.gameDetails)
+    const { gameDetails, comments } = useAppSelector(state => state.gameDetails.gameDetails)
     const { recommendedGames } = useAppSelector(
         state => state.main.main
     )
+    const { profile } = useAppSelector(state => state[commonModule].profile)
+
+
 
     const openModal = () => {
         setIsOpen(true)
@@ -383,8 +533,6 @@ const GamePage: FC<MainPageProps> = () => {
             lineHeight: '25px',
         }
     }
-
-    console.log(gameDetails?.rating)
 
 
     return (
@@ -462,11 +610,78 @@ const GamePage: FC<MainPageProps> = () => {
                     </div>
                     <div className='addToFav'>
                         <button onClick={() => {
-                            dispatch(favouriteDeveloper(gameDetails.id))
+                            dispatch(favouriteDeveloper(gameDetails?.creator?.id))
                             openModal()
                         }}>
                             <p>add to favourite</p>
                         </button>
+                    </div>
+                </div>
+
+                <div className='comment'>
+                    <img src={comment} alt={'comment'} className={'commentImg'}/>
+                    <div className={'allComments'}>
+                        {
+                            comments?.map(comment => (
+                                <div className='columnBox'>
+                                    <div className='imgBox'>
+                                        <img className={'sendCommentImg2'} src={comment?.userInfo?.id !== null ? comment?.userInfo?.img : profileImg} alt="profileImg"/>
+                                    </div>
+                                    <div className={'orangeInput2'}>
+                                        <div>
+                                            <p>{comment?.userInfo?.username}</p>
+                                        </div>
+                                        <div>
+                                            <input
+                                                type={'text'}
+                                                value={comment?.text}
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div className='send2'>
+                                            <button onClick={() => {
+                                                dispatch(deleteComment({
+                                                    gameId: gameDetails?.id,
+                                                    commentId: comment.id
+                                                }))
+                                            }}>
+                                                <p>DELETE</p>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
+
+                    <div className={'sendComment'}>
+                        <div className='imgBox'>
+                            <img className={'sendCommentImg'} src={profile?.id !== null ? profile?.imgUrl : profileImg} alt="profileImg"/>
+                        </div>
+                        <div className={'orangeInput'}>
+                            <div>
+                                <p>{profile?.username}</p>
+                            </div>
+                            <div>
+                                <input
+                                    type={'text'}
+                                    placeholder='Write your comment'
+                                    value={valueComment}
+                                    onChange={e => setValueComment(e.target.value)}
+                                />
+                            </div>
+                            <div className='send'>
+                                <button onClick={() => {
+                                    dispatch(sendComment({
+                                        gameId: gameDetails?.id,
+                                        text: valueComment
+                                    }))
+                                    setValueComment('')
+                                }}>
+                                    <p>SEND</p>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -530,8 +745,9 @@ const GamePage: FC<MainPageProps> = () => {
                                         src={game?.imgLink}
                                         alt={'gameImg'}
                                         onClick={() => {
-                                            history.push(`/game/${game?.id}`)
                                             dispatch(getGameDetail(game?.id))
+                                            dispatch(getComment(game?.id))
+                                            history.push(`/game/${game?.id}`)
                                         }}
                                     />
                                     <div className='btn'>
