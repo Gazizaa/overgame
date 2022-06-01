@@ -47,20 +47,20 @@ export const createGame: AppThunk<void, CreateGameParams> = createAsyncThunk(
             .catch(thunkErrorHandler(thunkApi))
     })
 
-export const getFavouriteGame: AppThunk<Games[]> = createAsyncThunk(
+export const getFavouriteGame: AppThunk<Games[], number> = createAsyncThunk(
     'main/get_favourite_games',
-    (_, thunkApi) =>
+    (id, thunkApi) =>
         instance(thunkApi)
-            .get('/v1/favourite/games')
+            .get(`/v1/favourite/games/users/${id}`)
             .then((res: AxiosResponse<Games[]>) => res.data)
             .catch(thunkErrorHandler(thunkApi)),
 )
 
-export const getFavouriteDeveloper: AppThunk<Developer[]> = createAsyncThunk(
+export const getFavouriteDeveloper: AppThunk<Developer[], number> = createAsyncThunk(
     'main/get_favourite_developer',
-    (_, thunkApi) =>
+    (id, thunkApi) =>
         instance(thunkApi)
-            .get('/v1/favourite/developer')
+            .get(`/v1/favourite/developer/users/${id}`)
             .then((res: AxiosResponse<Developer[]>) => res.data)
             .catch(thunkErrorHandler(thunkApi)),
 )
@@ -96,6 +96,17 @@ export const getRecommendedGames: AppThunk<Games[]> = createAsyncThunk(
             .catch(thunkErrorHandler(thunkApi)),
 )
 
+export const getMyGames: AppThunk<Games[], number> = createAsyncThunk(
+    'main/get_my_games',
+    (id, thunkApi) =>
+        instance(thunkApi)
+            .get(`/v1/games/users/${id}`)
+            .then((res: AxiosResponse<Games[]>) => res.data)
+            .catch(thunkErrorHandler(thunkApi)),
+)
+
+
+
 /**
  * Reducer
  */
@@ -108,7 +119,8 @@ const initialState: MainState= {
     developer: [],
     swiperImg: [],
     allDevelopers: [],
-    recommendedGames: []
+    recommendedGames: [],
+    myGames: []
 }
 
 const mainSlice = createSlice({
@@ -204,6 +216,19 @@ const mainSlice = createSlice({
                 state.loading = false
             })
             .addCase(getRecommendedGames.rejected, (state, {payload}) => {
+                state.error = payload
+                state.loading = false
+            })
+            .addCase(getMyGames.pending, state => {
+                state.error = null
+                state.loading = true
+            })
+            .addCase(getMyGames.fulfilled, (state, {payload}) => {
+                state.myGames = payload
+                state.error = null
+                state.loading = false
+            })
+            .addCase(getMyGames.rejected, (state, {payload}) => {
                 state.error = payload
                 state.loading = false
             })

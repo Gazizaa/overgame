@@ -77,4 +77,9 @@ export type AllDevelopers = {
   username: string
 }
 
+export type RateParams = {
+  gameId: number
+  grade: number
+}
+
 

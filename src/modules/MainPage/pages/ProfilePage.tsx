@@ -9,7 +9,7 @@ import bril from '../../../assets/images/bril.png'
 
 import {useAppDispatch, useAppSelector} from '../../../store/hooks'
 import {moduleName as commonModule} from '../../common/moduleName'
-import {getFavouriteDeveloper, getFavouriteGame, getGenres} from '../slices/main'
+import {getFavouriteDeveloper, getFavouriteGame, getGenres, getMyGames} from '../slices/main'
 import {useHistory} from 'react-router-dom'
 import {getGameDetail} from '../../GamePage/slices/gameDetails'
 
@@ -210,6 +210,59 @@ const ProfilePagerWrap = styled.div`
   .recommendation {
     margin: 20px;
   }
+
+  .gamesBoxGrid2 {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    justify-content: space-between;
+    margin-top: 30px;
+    justify-items: center;
+
+    .gameBox2 {
+      background: linear-gradient(90deg, #7E007C 0.85%, #5548B2 100.85%);
+      border: 2px solid #F9F871;
+      border-radius: 12px;
+      width: 240px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      .gameName2 {
+        font-size: 11px;
+        padding: 8px;
+        line-height: 15px;
+        text-align: center;
+      }
+      img {
+        width: 100%;
+        min-height: 120px;
+        cursor: pointer;
+      }
+
+      .btn {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+      }
+
+      button {
+        background: #D0BCFF;
+        border-radius: 100px;
+        outline: none;
+        border: none;
+        width: 95px;
+        margin: 10px 3px;
+        text-align: center;
+        .btnText {
+          color: #381E72;
+          font-size: 10px;
+          padding: 6px;
+          text-align: center;
+        }
+      }
+    }
+  }
 `
 
 
@@ -218,11 +271,12 @@ const ProfilePage: FC<MainPageProps> = () => {
     const history = useHistory()
 
     const { profile } = useAppSelector(state => state[commonModule].profile)
-    const { games, developer } = useAppSelector(state => state.main.main)
+    const { games, developer, myGames } = useAppSelector(state => state.main.main)
 
     useEffect(() => {
-        dispatch(getFavouriteGame())
-        dispatch(getFavouriteDeveloper())
+        dispatch(getFavouriteGame(profile?.id))
+        dispatch(getFavouriteDeveloper(profile?.id))
+        dispatch(getMyGames(profile?.id))
     }, [])
 
   return (
@@ -262,7 +316,32 @@ const ProfilePage: FC<MainPageProps> = () => {
                 </div>
                 <div className='listGames'>
                     <p className={'listGameName'}>List of My Games</p>
-                    <p className='listGameText2'>You haven’t uploade any game yet</p>
+                    {games.length === 0 ?
+                        <p className='listGameText2'>You haven’t upload any game yet</p>
+                        :
+                        <div className='gamesBoxGrid2'>
+                            {games?.map(myGame => (
+                            <div key={myGame?.id} className='gameBox2'>
+                                <p className={'gameName2'}>{myGame?.name}</p>
+                                <img
+                                    src={myGame?.imgLink}
+                                    alt={'gameImg'}
+                                    onClick={() => {
+                                        history.push(`/game/${myGame?.id}`)
+                                        dispatch(getGameDetail(myGame?.id))
+                                    }}
+                                />
+                                <div className='btn'>
+                                    <a href={myGame?.gameLink} target="_blank">
+                                        <button>
+                                            <p className='btnText'>Play</p>
+                                        </button>
+                                    </a>
+                                </div>
+                            </div>
+                            ))}
+                        </div>
+                    }
                 </div>
             </div>
 

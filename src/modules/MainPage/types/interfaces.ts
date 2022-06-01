@@ -9,4 +9,5 @@ export interface MainState {
   swiperImg: SwiperImages[]
   allDevelopers: AllDevelopers[]
   recommendedGames: Games[]
+  myGames: Games[]
 }

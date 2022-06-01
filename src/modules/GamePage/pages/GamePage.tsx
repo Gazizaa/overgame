@@ -5,9 +5,12 @@ import Header from '../../MainPage/pages/Header'
 import Footer from '../../MainPage/pages/Footer'
 import loginBtn from '../../../assets/images/loginBtn.png'
 import like from '../../../assets/images/like.png'
-import rating from '../../../assets/images/rating.png'
+import emptyHeart from '../../../assets/images/emptyHeart.png'
+import fullHeart from '../../../assets/images/fullHeart.png'
 import {useAppDispatch, useAppSelector} from '../../../store/hooks'
-import {favouriteDeveloper, favouriteGame} from "../slices/gameDetails";
+import {favouriteDeveloper, favouriteGame, getGameDetail, ratingGame} from '../slices/gameDetails'
+import {useHistory} from 'react-router-dom'
+import Rating from 'react-rating'
 
 export interface MainPageProps {
 }
@@ -36,7 +39,7 @@ const GamePageWrap = styled.div`
       
       .column1 {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 10px;
       }
       
@@ -44,6 +47,7 @@ const GamePageWrap = styled.div`
         img {
           width: 230px;
           height: 308px;
+          object-fit: cover;
         }
       }
     }
@@ -55,6 +59,7 @@ const GamePageWrap = styled.div`
         flex-direction: column;
         height: 50px;
         padding: 20px;
+        clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
 
         p {
           color: white;
@@ -70,11 +75,20 @@ const GamePageWrap = styled.div`
           line-height: 19px;
         }
       }
+      .ratingImg2 {
+        margin-top: 10px;
+        .ratingBox2 {
+          img {
+            width: 30px;
+          }
+        }
+
+      }
     }
     
     .column2 {
       display: flex;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: center;
       gap: 100px;
       margin: 20px 30px;
@@ -163,11 +177,11 @@ const GamePageWrap = styled.div`
 
       button {
         background: url(${loginBtn}) no-repeat;
-        height: 36px;
-        width: 120px;
+        height: 46px;
+        width: 140px;
         border: none;
         -webkit-background-size: 120px;
-        background-size: 120px;
+        background-size: 140px;
         background-position-y: center;
 
         p {
@@ -175,7 +189,7 @@ const GamePageWrap = styled.div`
           bottom: 2px;
           text-transform: uppercase;
           font-size: 10px;
-          line-height: 10px;
+          line-height: 15px;
         }
       }
     }
@@ -192,14 +206,13 @@ const GamePageWrap = styled.div`
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
+        width: 100%;
         
       .fullImgBox{
         border: 10px solid #FFFFFF;
         border-radius: 28px;
         width: 600px;
         height: fit-content;
-        //display: flex;
-        //justify-content: center;
         
         img {
           width: 600px;
@@ -255,11 +268,75 @@ const GamePageWrap = styled.div`
           .ratingText {
             font-size: 24px;
             text-align: center;
+            line-height: 33px;
           }
           
           .ratingImg {
-            img {
-              width: 300px;
+            .ratingBox{
+              img {
+                width: 90px;
+              }
+            }
+          }
+        }
+      }
+      
+      .recommendationText {
+        margin-top: 40px;
+        font-size: 20px;
+      }
+
+      .recommendationImgBox1 {
+        display: grid;
+        gap: 15px;
+        grid-template-columns: repeat(4, 1fr);
+        justify-content: space-between;
+        margin-top: 30px;
+        width: 100%;
+
+        .gameBox {
+          background: linear-gradient(90deg, #7E007C 0.85%, #5548B2 100.85%);
+          border: 2px solid #F9F871;
+          border-radius: 12px;
+          width: 190px;
+          height: 220px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: space-around;
+          justify-items: center;
+
+          .gameName {
+            font-size: 11px;
+            padding: 8px;
+            line-height: 15px;
+            text-align: center;
+          }
+          img {
+            width: 100%;
+            min-height: 120px;
+            cursor: pointer;
+          }
+
+          .btn {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+          }
+
+          button {
+            background: #D0BCFF;
+            border-radius: 100px;
+            outline: none;
+            border: none;
+            width: 95px;
+            margin: 10px 3px;
+            text-align: center;
+            .btnText {
+              color: #381E72;
+              font-size: 10px;
+              padding: 6px;
+              text-align: center;
             }
           }
         }
@@ -273,14 +350,14 @@ const GamePageWrap = styled.div`
 
 const GamePage: FC<MainPageProps> = () => {
     const dispatch = useAppDispatch()
+    const history = useHistory()
 
     const [modalIsOpen, setIsOpen] = useState(false);
 
     const { gameDetails } = useAppSelector(state => state.gameDetails.gameDetails)
-
-    useEffect(() => {
-
-    }, [])
+    const { recommendedGames } = useAppSelector(
+        state => state.main.main
+    )
 
     const openModal = () => {
         setIsOpen(true)
@@ -307,8 +384,10 @@ const GamePage: FC<MainPageProps> = () => {
         }
     }
 
+    console.log(gameDetails?.rating)
 
-  return (
+
+    return (
     <GamePageWrap>
         <Header/>
         <div className='flexBox'>
@@ -322,8 +401,17 @@ const GamePage: FC<MainPageProps> = () => {
                             <div>
                                 <p>{gameDetails?.name}</p>
                             </div>
-                            <div>
-                                <p>{gameDetails?.rating}</p>
+                            <div className={'ratingImg2'}>
+                                <div className={'ratingBox2'}>
+                                    {/*// @ts-ignore */}
+                                    <Rating
+                                        initialRating={gameDetails?.rating}
+                                        readonly
+                                        emptySymbol={<img src={emptyHeart} className="icon" alt={'img'}/>}
+                                        placeholderSymbol={<img src={fullHeart} className="icon" alt={'img'}/>}
+                                        fullSymbol={<img src={fullHeart} className="icon" alt={'img'}/>}
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -414,13 +502,49 @@ const GamePage: FC<MainPageProps> = () => {
                             <p>Rate <br/> the game</p>
                         </div>
                         <div className={'ratingImg'}>
-                            <img src={rating} alt={'rating'}/>
+                            <div className={'ratingBox'}>
+                                {/*// @ts-ignore */}
+                                <Rating
+                                    initialRating={gameDetails?.rating}
+                                    onChange={e => dispatch(ratingGame({
+                                        gameId: gameDetails?.id,
+                                        grade: e
+                                    }))}
+                                    emptySymbol={<img src={emptyHeart} className="icon" alt={'img'}/>}
+                                    placeholderSymbol={<img src={fullHeart} className="icon" alt={'img'}/>}
+                                    fullSymbol={<img src={fullHeart} className="icon" alt={'img'}/>}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div className='recommendation'>
-                    <p>Recomendations from author:</p>
+                    <p className='recommendationText'>Recomendations from author:</p>
+                    <div className='recommendationImgBox1'>
+                        {
+                            recommendedGames.map(game => (
+                                <div key={game?.id} className='gameBox'>
+                                    <p className={'gameName'}>{game?.name}</p>
+                                    <img
+                                        src={game?.imgLink}
+                                        alt={'gameImg'}
+                                        onClick={() => {
+                                            history.push(`/game/${game?.id}`)
+                                            dispatch(getGameDetail(game?.id))
+                                        }}
+                                    />
+                                    <div className='btn'>
+                                        <a href={game?.gameLink} target="_blank">
+                                            <button>
+                                                <p className='btnText'>Play</p>
+                                            </button>
+                                        </a>
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
                 </div>
 
             </div>

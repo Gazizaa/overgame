@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios'
 import {AppThunk, instance} from '../../../store'
 import {thunkErrorHandler} from '../../../settings/errorHandler'
 import {GameDetailState} from '../types'
-import {Games} from '../../MainPage/types'
+import {Games, RateParams} from '../../MainPage/types'
 
 
 
@@ -36,6 +36,18 @@ export const favouriteGame: AppThunk<void, number> = createAsyncThunk(
         instance(thunkApi)
             .post(`/v1/favourite/games/${gameId}`)
             .then((res: AxiosResponse<void>) => res.data)
+            .catch(thunkErrorHandler(thunkApi)),
+)
+
+export const ratingGame: AppThunk<void, RateParams> = createAsyncThunk(
+    'game/ratingGame',
+    (params, thunkApi) =>
+        instance(thunkApi)
+            .post(`/v1/rating/games/${params.gameId}?grade=${params.grade}`)
+            .then((res: AxiosResponse<void>) => {
+                thunkApi.dispatch(getGameDetail(params.gameId))
+               return res.data
+            })
             .catch(thunkErrorHandler(thunkApi)),
 )
 
@@ -90,6 +102,18 @@ const gameDetailsSlice = createSlice({
                 state.loading = false
             })
             .addCase(favouriteGame.rejected, (state, {payload}) => {
+                state.error = payload
+                state.loading = false
+            })
+            .addCase(ratingGame.pending, state => {
+                state.error = null
+                state.loading = true
+            })
+            .addCase(ratingGame.fulfilled, state => {
+                state.error = null
+                state.loading = false
+            })
+            .addCase(ratingGame.rejected, (state, {payload}) => {
                 state.error = payload
                 state.loading = false
             })
